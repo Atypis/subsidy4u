@@ -1,0 +1,29 @@
+{
+  "name": "foerderdatenbank-scraper",
+  "version": "1.0.0",
+  "description": "Scraper for German subsidy programs from foerderdatenbank.de",
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "scrape": "node src/index.js",
+    "scrape:listings": "node src/scrape-listings.js",
+    "scrape:details": "node src/scrape-details.js",
+    "test": "node src/index.js --dry-run --limit 5"
+  },
+  "keywords": [
+    "scraper",
+    "foerderdatenbank",
+    "subsidies",
+    "germany"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.39.0",
+    "playwright": "^1.40.0",
+    "dotenv": "^16.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0"
+  }
+}

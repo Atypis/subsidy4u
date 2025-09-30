@@ -1,0 +1,21 @@
+{
+  "mcpServers": {
+    "browser-automation": {
+      "command": "node",
+      "args": [
+        "/Users/a1984/subsidy4u/browser-automation-mcp/dist/index.js"
+      ],
+      "disabled": false
+    },
+    "supabase": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@supabase/mcp-server-supabase@latest",
+        "--access-token",
+        "sbp_0553026b23011b1ad9c6829e92114343a30963c8"
+      ],
+      "disabled": true
+    }
+  }
+}
