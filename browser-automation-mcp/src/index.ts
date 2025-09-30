@@ -237,15 +237,16 @@ const tools = [
   },
   {
     name: 'take_screenshot',
-    description: 'Capture screenshot of page or element',
+    description: 'Capture screenshot of page or element. For large screenshots, use path parameter to save to file, or use format="jpeg" with quality=60 to reduce size.',
     inputSchema: {
       type: 'object',
       properties: {
         session_id: { type: 'string' },
-        selector: { type: 'string' },
-        full_page: { type: 'boolean', default: false },
-        format: { type: 'string', enum: ['png', 'jpeg'], default: 'png' },
-        path: { type: 'string' },
+        selector: { type: 'string', description: 'CSS selector to screenshot specific element' },
+        full_page: { type: 'boolean', default: false, description: 'Capture full scrollable page (can be very large)' },
+        format: { type: 'string', enum: ['png', 'jpeg'], default: 'png', description: 'Image format. Use JPEG for smaller file size.' },
+        path: { type: 'string', description: 'File path to save screenshot. RECOMMENDED for large images to avoid base64 overhead.' },
+        quality: { type: 'number', description: 'JPEG quality (0-100). Lower = smaller file. Recommended: 60-80. Only works with format="jpeg".' },
       },
       required: ['session_id'],
     },
@@ -484,6 +485,41 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 
       case 'take_screenshot': {
         const result = await takeScreenshot(browserManager, params);
+
+        // If screenshot has warning (too large), return as text
+        if (result.warning) {
+          return { content: [{ type: 'text', text: JSON.stringify(result) }] };
+        }
+
+        // If screenshot was saved to path, return path info as text
+        if (result.path) {
+          return {
+            content: [{
+              type: 'text',
+              text: JSON.stringify({
+                path: result.path,
+                size: result.size,
+                message: `Screenshot saved to ${result.path} (${result.size}KB)`
+              })
+            }]
+          };
+        }
+
+        // If screenshot is base64, return as proper MCP ImageContent
+        if (result.base64) {
+          const format = params.format || 'png';
+          return {
+            content: [
+              {
+                type: 'image',
+                data: result.base64,
+                mimeType: format === 'jpeg' ? 'image/jpeg' : 'image/png',
+              },
+            ],
+          };
+        }
+
+        // Fallback
         return { content: [{ type: 'text', text: JSON.stringify(result) }] };
       }
 

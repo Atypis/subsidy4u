@@ -18,7 +18,21 @@ export async function executeJs(
     }, script);
     return { result };
   } catch (error) {
-    throw new Error(`${ErrorCodes.JS_EXECUTION_ERROR}: ${(error as Error).message}`);
+    const errorMsg = (error as Error).message;
+
+    // Provide helpful suggestions for common errors
+    let helpfulHint = '';
+    if (errorMsg.includes('not a valid selector') || errorMsg.includes(':contains')) {
+      helpfulHint = '\n\nHint: :contains() is not a valid CSS selector. Use JavaScript instead: Array.from(document.querySelectorAll(\'a\')).find(el => el.textContent?.includes(\'text\'))';
+    } else if (errorMsg.includes('querySelectorAll') && errorMsg.includes('null')) {
+      helpfulHint = '\n\nHint: Element not found. Check if the selector exists on the page, or if you need to wait for dynamic content to load.';
+    } else if (errorMsg.includes('JSON') || errorMsg.includes('circular')) {
+      helpfulHint = '\n\nHint: Cannot serialize complex objects (DOM elements, functions, circular references). Return plain objects/arrays/strings instead.';
+    } else if (errorMsg.includes('undefined') && errorMsg.includes('property')) {
+      helpfulHint = '\n\nHint: Use optional chaining (?.) to safely access properties that might be undefined: element?.querySelector(\'.class\')?.textContent';
+    }
+
+    throw new Error(`${ErrorCodes.JS_EXECUTION_ERROR}: ${errorMsg}${helpfulHint}`);
   }
 }
 
