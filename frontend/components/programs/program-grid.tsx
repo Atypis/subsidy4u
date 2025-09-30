@@ -10,52 +10,58 @@ export function ProgramGrid() {
   const visiblePrograms = useAppStore((state) => state.visiblePrograms)
   const isLoading = useAppStore((state) => state.isLoading)
   const setSelectedProgram = useAppStore((state) => state.setSelectedProgram)
-  const [initialLoad, setInitialLoad] = useState(true)
+  const setVisiblePrograms = useAppStore((state) => state.setVisiblePrograms)
+  const [totalCount, setTotalCount] = useState<number>(0)
+  const [isFiltered, setIsFiltered] = useState(false)
 
+  // Load all programs on mount
   useEffect(() => {
-    if (visiblePrograms.length > 0) {
-      setInitialLoad(false)
+    async function loadPrograms() {
+      try {
+        const response = await fetch('/api/programs?limit=100')
+        const data = await response.json()
+        setTotalCount(data.total || 0)
+        setVisiblePrograms(data.programs.map((p: any) => ({
+          ...p,
+          status: 'eligible' as const
+        })))
+      } catch (error) {
+        console.error('Failed to load programs:', error)
+      }
     }
-  }, [visiblePrograms])
+    loadPrograms()
+  }, [setVisiblePrograms])
 
   const eligiblePrograms = visiblePrograms.filter(p => p.status === 'eligible')
-
-  if (initialLoad) {
-    return (
-      <div className="flex flex-col h-full bg-white">
-        <div className="px-8 py-8">
-          <h2 className="text-3xl font-light text-neutral-900 mb-3">
-            Eligible programs
-          </h2>
-          <p className="text-neutral-500 text-sm">
-            Results will appear here as they're filtered
-          </p>
-        </div>
-      </div>
-    )
-  }
-
-  if (isLoading && visiblePrograms.length === 0) {
-    return (
-      <div className="flex items-center justify-center h-full bg-white">
-        <div className="flex items-center gap-3 text-neutral-500">
-          <Loader2 className="h-5 w-5 animate-spin" />
-          <span className="text-sm">Loading</span>
-        </div>
-      </div>
-    )
-  }
+  
+  // Check if any program has been marked as filtered
+  const hasFilteredPrograms = visiblePrograms.some((p: any) => p.isFiltered)
+  
+  // Update filtered state based on filtered flag
+  useEffect(() => {
+    setIsFiltered(hasFilteredPrograms)
+  }, [hasFilteredPrograms])
 
   return (
     <div className="flex flex-col h-full bg-white">
       {/* Header */}
       <div className="border-b border-neutral-200 px-8 py-4">
         <div className="flex items-baseline justify-between">
-          <h2 className="text-sm font-medium text-neutral-900">
-            {eligiblePrograms.length} {eligiblePrograms.length === 1 ? 'Program' : 'Programs'}
-          </h2>
+          <div className="flex items-center gap-3">
+            {isFiltered && totalCount > 0 && (
+              <span className="text-sm text-neutral-400 line-through">
+                {totalCount.toLocaleString()}
+              </span>
+            )}
+            <h2 className="text-sm font-medium text-neutral-900">
+              {isFiltered 
+                ? `${eligiblePrograms.length.toLocaleString()} ${eligiblePrograms.length === 1 ? 'Program' : 'Programs'}`
+                : `${totalCount.toLocaleString()} Programs`
+              }
+            </h2>
+          </div>
           <p className="text-xs text-neutral-500">
-            Binary filtered
+            {isFiltered ? 'Filtered' : `Showing ${eligiblePrograms.length}`}
           </p>
         </div>
       </div>

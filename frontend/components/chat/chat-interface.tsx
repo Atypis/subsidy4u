@@ -8,6 +8,8 @@ import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 
 export function ChatInterface() {
+  const setVisiblePrograms = useAppStore((state) => state.setVisiblePrograms)
+  
   const { messages, input, handleInputChange, handleSubmit, isLoading } = useChat({
     api: '/api/chat',
     onFinish: (message) => {
@@ -15,6 +17,19 @@ export function ChatInterface() {
     },
     onToolCall: ({ toolCall }) => {
       console.log('Tool called:', toolCall)
+      
+      // Update programs when filter tool completes
+      if (toolCall.toolName === 'apply_filters' && 'result' in toolCall) {
+        const result = toolCall.result as any
+        if (result?.matchingPrograms) {
+          // Mark programs as filtered by adding a flag
+          setVisiblePrograms(result.matchingPrograms.map((p: any) => ({
+            ...p,
+            status: 'eligible' as const,
+            isFiltered: true
+          })))
+        }
+      }
     }
   })
 
@@ -38,9 +53,13 @@ export function ChatInterface() {
             <h2 className="text-3xl font-light text-neutral-900 mb-3">
               Find your subsidy
             </h2>
-            <p className="text-neutral-500 text-sm leading-relaxed max-w-md">
-              Describe your company and we'll filter through 2000+ German programs using intelligent criteria.
+            <p className="text-neutral-500 text-sm leading-relaxed max-w-md mb-6">
+              All available programs are shown on the right. Describe your company to filter them down using binary eligibility criteria.
             </p>
+            <div className="text-xs text-neutral-400 space-y-1 max-w-md">
+              <p>Try: "I'm a small tech startup in Berlin"</p>
+              <p>Or: "Medium-sized manufacturer in Bavaria"</p>
+            </div>
           </div>
         )}
 
