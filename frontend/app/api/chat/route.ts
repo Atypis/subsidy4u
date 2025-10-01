@@ -59,41 +59,51 @@ export async function POST(req: Request) {
             return {
               success: true,
               companyProfile: params,
-              message: `Company profile extracted: ${params.name || 'Company'} in ${params.location}, ${params.size} Unternehmen`
             }
           }
         }),
 
         apply_filters: tool({
-          description: 'Apply binary filters to subsidy programs. Returns only programs that match ALL criteria.',
+          description: 'Apply binary filters to narrow down subsidy programs based on specific criteria',
           parameters: z.object({
-            region: z.array(z.string()).optional().describe('Bundesland or "bundesweit"'),
-            foerderart: z.array(z.string()).optional().describe('Funding type: Zuschuss, Darlehen, Bürgschaft, etc.'),
-            foerderbereich: z.array(z.string()).optional().describe('Funding sector/area'),
-            companySize: z.string().optional().describe('Company size: kleine, mittlere, große')
+            region: z.array(z.string()).optional().describe('Regions to filter by (bundesweit, Bayern, Berlin, etc.)'),
+            companySize: z.enum(['klein', 'mittel', 'groß']).optional().describe('Company size'),
+            foerderart: z.array(z.string()).optional().describe('Funding types (Zuschuss, Darlehen, etc.)'),
+            industry: z.string().optional().describe('Industry sector')
           }),
           execute: async (filters) => {
+            console.log('🔧 [SERVER] apply_filters called with:', filters)
             const supabase = getSupabase()
-            let query = supabase.from('subsidy_programs').select('id, title, foerderart, foerdergebiet, kurztext')
+            let query = supabase.from('subsidy_programs').select('id, title, foerderart, foerdergebiet, foerdergeber, kurztext')
             
             // Build filter conditions
             if (filters.region && filters.region.length > 0) {
-              const regionConditions = filters.region.map(r => `foerdergebiet.ilike.%${r}%`).join(',')
-              query = query.or(regionConditions)
+              console.log('🌍 [SERVER] Filtering by regions:', filters.region)
+              // Use overlaps operator for array matching
+              query = query.overlaps('foerdergebiet', filters.region)
             }
             
             if (filters.companySize) {
-              query = query.ilike('foerderberechtigte', `%${filters.companySize}%`)
+              console.log('🏢 [SERVER] Filtering by company size:', filters.companySize)
+              // Check if foerderberechtigte contains the company size
+              query = query.contains('foerderberechtigte', [filters.companySize])
             }
             
             if (filters.foerderart && filters.foerderart.length > 0) {
-              const artConditions = filters.foerderart.map(art => `foerderart.ilike.%${art}%`).join(',')
-              query = query.or(artConditions)
+              console.log('💰 [SERVER] Filtering by funding types:', filters.foerderart)
+              // Use overlaps for array matching
+              query = query.overlaps('foerderart', filters.foerderart)
             }
             
+            console.log('🔍 [SERVER] Executing query...')
             const { data, error } = await query
             
-            if (error) throw error
+            if (error) {
+              console.error('❌ [SERVER] Query error:', error)
+              throw error
+            }
+            
+            console.log(`✅ [SERVER] Found ${data?.length || 0} programs`)
             
             return {
               success: true,

@@ -8,3 +8,12 @@ dist/
 *.tsbuildinfo
 .vercel
 .supabase
+
+# Scraper progress and backups
+scraper/progress.json
+scraper/progress.backup*.json
+scraper/progress.corrupted.json
+scraper/test-output.json
+
+# Documentation (moved to /docs)
+*.backup.md

@@ -5,6 +5,7 @@ import { useAppStore } from '@/store/app-store'
 import { ProgramCard } from './program-card'
 import { Loader2 } from 'lucide-react'
 import { useEffect, useState } from 'react'
+import { useCounterAnimation } from '@/hooks/use-counter-animation'
 
 export function ProgramGrid() {
   const visiblePrograms = useAppStore((state) => state.visiblePrograms)
@@ -41,28 +42,71 @@ export function ProgramGrid() {
   useEffect(() => {
     setIsFiltered(hasFilteredPrograms)
   }, [hasFilteredPrograms])
+  
+  // Animated counter for smooth number transitions
+  const displayCount = useCounterAnimation(eligiblePrograms.length, 800)
 
   return (
-    <div className="flex flex-col h-full bg-white">
+    <div className="flex flex-col h-full bg-white relative">
+      {/* Filtering overlay */}
+      <AnimatePresence>
+        {isLoading && isFiltered && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="absolute inset-0 bg-white/60 backdrop-blur-sm z-10 flex items-center justify-center"
+          >
+            <div className="flex items-center gap-3 px-6 py-3 bg-white border border-neutral-200 rounded-full shadow-sm">
+              <motion.div
+                animate={{ rotate: 360 }}
+                transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+              >
+                <Loader2 className="h-4 w-4 text-neutral-900" />
+              </motion.div>
+              <span className="text-sm text-neutral-900">Filtering</span>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Header */}
       <div className="border-b border-neutral-200 px-8 py-4">
         <div className="flex items-baseline justify-between">
           <div className="flex items-center gap-3">
             {isFiltered && totalCount > 0 && (
-              <span className="text-sm text-neutral-400 line-through">
+              <motion.span 
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                className="text-sm text-neutral-400 line-through"
+              >
                 {totalCount.toLocaleString()}
-              </span>
+              </motion.span>
             )}
-            <h2 className="text-sm font-medium text-neutral-900">
+            <motion.h2 
+              className="text-sm font-medium text-neutral-900 tabular-nums"
+              key={displayCount}
+              initial={{ opacity: 0.5, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ 
+                duration: 0.3,
+                scale: { type: "spring", stiffness: 300, damping: 20 }
+              }}
+            >
               {isFiltered 
-                ? `${eligiblePrograms.length.toLocaleString()} ${eligiblePrograms.length === 1 ? 'Program' : 'Programs'}`
+                ? `${displayCount.toLocaleString()} ${displayCount === 1 ? 'Program' : 'Programs'}`
                 : `${totalCount.toLocaleString()} Programs`
               }
-            </h2>
+            </motion.h2>
           </div>
-          <p className="text-xs text-neutral-500">
+          <motion.p 
+            className="text-xs text-neutral-500"
+            key={isFiltered ? 'filtered' : 'all'}
+            initial={{ opacity: 0, y: -5 }}
+            animate={{ opacity: 1, y: 0 }}
+          >
             {isFiltered ? 'Filtered' : `Showing ${eligiblePrograms.length}`}
-          </p>
+          </motion.p>
         </div>
       </div>
 

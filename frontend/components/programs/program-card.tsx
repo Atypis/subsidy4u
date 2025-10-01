@@ -17,10 +17,29 @@ export function ProgramCard({ program, onClick }: ProgramCardProps) {
   return (
     <motion.div
       layout
-      initial={{ opacity: 0, y: 8 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, scale: 0.95 }}
-      transition={{ duration: 0.2 }}
+      initial={{ opacity: 0, x: -20, scale: 0.95 }}
+      animate={{ 
+        opacity: 1, 
+        x: 0, 
+        scale: 1,
+        transition: {
+          type: "spring",
+          stiffness: 300,
+          damping: 30
+        }
+      }}
+      exit={{ 
+        opacity: 0, 
+        x: 20, 
+        scale: 0.9,
+        transition: {
+          duration: 0.2
+        }
+      }}
+      whileHover={{ 
+        x: 4,
+        transition: { duration: 0.15 }
+      }}
       className="group border-b border-neutral-200 py-6 cursor-pointer hover:bg-neutral-50 -mx-8 px-8 transition-colors"
       onClick={onClick}
     >

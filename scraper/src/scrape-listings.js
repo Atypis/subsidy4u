@@ -1,30 +1,60 @@
 import { chromium } from 'playwright';
 import { config } from './config.js';
-import { delay, ProgressTracker, withRetry, formatDuration } from './utils.js';
+import { delay, withRetry, formatDuration } from './utils.js';
+import fs from 'fs/promises';
 
 /**
- * Scrape all listing pages to collect program URLs
- *
- * This script extracts URLs from search result pages.
- * estimated time: ~20 minutes with 5s delays
+ * Memory-efficient listing scraper
+ * Appends URLs to file instead of loading all into memory
  */
 
-export async function scrapeListings(options = {}) {
-  const {
-    maxPages = null,  // null = all pages
-    startPage = null,  // null = auto-resume from progress
-    dryRun = false
-  } = options;
+let gracefulShutdown = false;
+process.on('SIGINT', () => {
+  console.log('\n\n⚠️  Graceful shutdown initiated...');
+  gracefulShutdown = true;
+});
 
-  const tracker = new ProgressTracker(config.progressFile);
-  await tracker.load();
+async function readProgress() {
+  try {
+    const content = await fs.readFile(config.progressFile, 'utf-8');
+    const data = JSON.parse(content);
+    return {
+      lastPage: data.lastListingPage || 0,
+      urlCount: Array.isArray(data.scrapedUrls) ? data.scrapedUrls.length : 0
+    };
+  } catch (error) {
+    return { lastPage: 0, urlCount: 0 };
+  }
+}
 
-  // Auto-resume from last saved page, or start from page 1
-  const resumePage = startPage !== null ? startPage : (tracker.data.lastListingPage || 0) + 1;
+async function savePageProgress(pageNum, urls) {
+  try {
+    const content = await fs.readFile(config.progressFile, 'utf-8');
+    const data = JSON.parse(content);
 
-  console.log('🚀 Starting listing scraper...');
-  console.log(`⏱️  Delay: ${config.delay}ms between requests`);
-  console.log(`📄 ${resumePage > 1 ? `Resuming from page ${resumePage}` : 'Starting from page 1'}`);
+    // Add new URLs
+    const existing = new Set(data.scrapedUrls || []);
+    urls.forEach(url => existing.add(url));
+    data.scrapedUrls = Array.from(existing);
+
+    // Update page
+    data.lastListingPage = Math.max(data.lastListingPage || 0, pageNum);
+    data.lastUpdated = new Date().toISOString();
+
+    await fs.writeFile(config.progressFile, JSON.stringify(data, null, 2));
+  } catch (error) {
+    console.error('Error saving progress:', error.message);
+  }
+}
+
+async function main() {
+  const startTime = Date.now();
+  const progress = await readProgress();
+  const startPage = progress.lastPage + 1;
+
+  console.log('🚀 Starting listing scraper v2 (memory-efficient)...');
+  console.log(`📄 Resuming from page ${startPage}`);
+  console.log(`📊 Current URL count: ${progress.urlCount}`);
 
   const browser = await chromium.launch({ headless: true });
   const context = await browser.newContext({
@@ -33,163 +63,108 @@ export async function scrapeListings(options = {}) {
   });
   const page = await context.newPage();
 
-  const allUrls = new Set(tracker.data.scrapedUrls || []);
-  const startTime = Date.now();
-
   try {
-    // Always navigate to the first page to establish pagination information
+    // Get total pages
     const searchUrl = new URL(config.searchUrl);
     Object.entries(config.searchParams).forEach(([key, value]) => {
       searchUrl.searchParams.set(key, value);
     });
 
-    console.log(`🌐 Navigating to: ${searchUrl.toString()}`);
-    await page.goto(searchUrl.toString(), { waitUntil: 'networkidle', timeout: config.timeout });
-
-    const paginationInfo = await page.evaluate(() => {
-      const pageLinks = Array.from(document.querySelectorAll('.c-pagination a, .pagination a'));
-      const pageNumbers = pageLinks
-        .map(a => parseInt(a.textContent?.trim()))
-        .filter(n => !isNaN(n));
-
-      return {
-        maxPage: pageNumbers.length ? Math.max(...pageNumbers) : 1,
-        hasNext: !!document.querySelector('a.forward.button, a[href*="weiter"]')
-      };
+    await page.goto(searchUrl.toString(), { waitUntil: 'networkidle', timeout: 30000 });
+    const totalPages = await page.evaluate(() => {
+      const links = Array.from(document.querySelectorAll('.pagination a'));
+      const numbers = links.map(a => parseInt(a.textContent?.trim())).filter(n => !isNaN(n));
+      return numbers.length ? Math.max(...numbers) : 245;
     });
 
-    const totalPages = maxPages ? Math.min(maxPages, paginationInfo.maxPage) : paginationInfo.maxPage;
-    console.log(`📊 Total pages reported: ${totalPages}`);
+    console.log(`📊 Total pages: ${totalPages}`);
 
-    const lastCompletedPage = tracker.data.lastListingPage || 0;
-    const desiredStartPage = startPage !== null ? startPage : lastCompletedPage + 1;
-    const startPageClamped = Math.min(Math.max(desiredStartPage, 1), totalPages);
-
-    if (startPageClamped > totalPages) {
-      console.log('ℹ️  All listing pages already processed.');
-      return Array.from(allUrls);
+    // Navigate to start page if needed
+    if (startPage > 1) {
+      const directUrl = new URL(config.searchUrl);
+      Object.entries(config.searchParams).forEach(([key, value]) => {
+        directUrl.searchParams.set(key, value);
+      });
+      directUrl.searchParams.set('gtp', `%2526816beae2-d57e-4bdc-b55d-392bc1e17027_list%253D${startPage}`);
+      await page.goto(directUrl.toString(), { waitUntil: 'networkidle', timeout: 30000 });
     }
 
-    let currentPage = 1;
-
-    if (startPageClamped > 1) {
-      console.log(`⏭️  Fast-forwarding to page ${startPageClamped}...`);
-      while (currentPage < startPageClamped) {
-        const nextDelay = Math.min(config.delay, 1500);
-        await delay(nextDelay);
-
-        await withRetry(async () => {
-          await page.click(config.selectors.nextButton);
-          await page.waitForLoadState('networkidle', { timeout: config.timeout });
-        }, config.maxRetries, config.delay);
-
-        currentPage++;
-      }
-      console.log(`✅ Resumed at page ${currentPage}`);
-    }
-
-    let processedThisRun = 0;
+    let currentPage = startPage;
+    let processedPages = 0;
 
     while (currentPage <= totalPages) {
-      console.log(`\n📄 Page ${currentPage}/${totalPages}`);
-
-      const programs = await page.evaluate((selector) => {
-        return Array.from(document.querySelectorAll(selector)).map(card => {
-          const links = card.querySelectorAll('a');
-          const mainLink = Array.from(links).find(a =>
-            a.href && a.href.includes('/Content/')
-          );
-
-          return {
-            title: card.querySelector('h2, h3')?.textContent?.trim(),
-            url: mainLink?.href,
-            basketId: card.querySelector('[data-basket-id]')?.getAttribute('data-basket-id')
-          };
-        }).filter(p => p.url);
-      }, config.selectors.programCard);
-
-      console.log(`  ✅ Found ${programs.length} programs`);
-
-      programs.forEach(p => allUrls.add(p.url));
-
-      if (!dryRun) {
-        tracker.addUrls(programs.map(p => p.url));
-        tracker.markListingPage(currentPage);
-        await tracker.save();
-      }
-
-      processedThisRun++;
-
-      if (currentPage >= totalPages) {
+      if (gracefulShutdown) {
+        console.log('✅ Graceful shutdown complete.');
         break;
       }
 
+      console.log(`\n📄 Page ${currentPage}/${totalPages}`);
+
+      try {
+        const programs = await page.evaluate((selector) => {
+          return Array.from(document.querySelectorAll(selector)).map(card => {
+            const links = card.querySelectorAll('a');
+            const mainLink = Array.from(links).find(a => a.href && a.href.includes('/Content/'));
+            return mainLink?.href;
+          }).filter(Boolean);
+        }, config.selectors.programCard);
+
+        console.log(`  ✅ Found ${programs.length} programs`);
+
+        if (programs.length > 0) {
+          await savePageProgress(currentPage, programs);
+          const newProgress = await readProgress();
+          console.log(`  💾 Saved (total: ${newProgress.urlCount} URLs)`);
+        }
+
+        processedPages++;
+
+        const elapsed = Date.now() - startTime;
+        const avgTime = elapsed / processedPages;
+        const remaining = (totalPages - currentPage) * avgTime;
+        console.log(`  ⏱️  ETA: ${formatDuration(remaining)}`);
+
+      } catch (error) {
+        console.error(`  ❌ Error on page ${currentPage}:`, error.message);
+      }
+
+      if (currentPage >= totalPages) break;
+
       const hasNext = await page.evaluate((selector) => {
-        const nextBtn = document.querySelector(selector);
-        return nextBtn && nextBtn.offsetParent !== null;
+        const btn = document.querySelector(selector);
+        return btn && btn.offsetParent !== null;
       }, config.selectors.nextButton);
 
       if (!hasNext) {
-        console.log('  ℹ️  No next page button found. Stopping.');
+        console.log('  ℹ️  No next button. Done.');
         break;
       }
 
-      console.log(`  ⏳ Waiting ${config.delay}ms before next page...`);
       await delay(config.delay);
-
       await withRetry(async () => {
         await page.click(config.selectors.nextButton);
-        await page.waitForLoadState('networkidle', { timeout: config.timeout });
-      }, config.maxRetries, config.delay);
+        await page.waitForLoadState('networkidle', { timeout: 30000 });
+      }, 3, config.delay);
 
       currentPage++;
-
-      const elapsed = Date.now() - startTime;
-      const averagePageTime = elapsed / Math.max(processedThisRun, 1);
-      const remainingPages = totalPages - currentPage + 1;
-      const estimatedRemaining = remainingPages * averagePageTime;
-
-      console.log(`  ⏱️  Elapsed: ${formatDuration(elapsed)} | Est. remaining: ${formatDuration(estimatedRemaining)}`);
-      console.log(`  📊 Total URLs collected: ${allUrls.size}`);
     }
 
   } catch (error) {
-    console.error('❌ Error during scraping:', error);
-    tracker.addError(error);
-    await tracker.save();
-    throw error;
+    console.error('❌ Fatal error:', error);
   } finally {
     await browser.close();
   }
 
-  const elapsed = Date.now() - startTime;
-  console.log('\n✅ Listing scrape complete!');
-  console.log(`📊 Total URLs collected: ${allUrls.size}`);
-  console.log(`⏱️  Total time: ${formatDuration(elapsed)}`);
-
-  if (!dryRun) {
-    console.log(`💾 Progress saved to: ${config.progressFile}`);
-  }
-
-  return Array.from(allUrls);
+  const finalProgress = await readProgress();
+  console.log('\n✅ Scraping complete!');
+  console.log(`📊 Total URLs: ${finalProgress.urlCount}`);
+  console.log(`📄 Last page: ${finalProgress.lastPage}`);
+  console.log(`⏱️  Time: ${formatDuration(Date.now() - startTime)}`);
 }
 
-// Run if called directly
-if (import.meta.url === `file://${process.argv[1]}`) {
-  const args = process.argv.slice(2);
-  const options = {
-    maxPages: args.includes('--limit') ? parseInt(args[args.indexOf('--limit') + 1]) : null,
-    dryRun: args.includes('--dry-run')
-  };
-
-  scrapeListings(options)
-    .then(urls => {
-      console.log(`\n📝 Sample URLs:`);
-      urls.slice(0, 5).forEach(url => console.log(`  - ${url}`));
-      process.exit(0);
-    })
-    .catch(error => {
-      console.error('Fatal error:', error);
-      process.exit(1);
-    });
-}
+main()
+  .then(() => process.exit(0))
+  .catch(error => {
+    console.error('Fatal:', error);
+    process.exit(1);
+  });

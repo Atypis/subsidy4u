@@ -13,23 +13,33 @@ export function ChatInterface() {
   const { messages, input, handleInputChange, handleSubmit, isLoading } = useChat({
     api: '/api/chat',
     onFinish: (message) => {
-      console.log('Message finished:', message)
+      console.log('✅ Message finished:', message)
+      console.log('📦 Tool invocations:', message.toolInvocations)
+      
+      // Process tool results from the finished message
+      if (message.toolInvocations) {
+        message.toolInvocations.forEach((toolInvocation: any) => {
+          console.log('🔍 Processing tool:', toolInvocation.toolName, 'state:', toolInvocation.state)
+          
+          if (toolInvocation.toolName === 'apply_filters' && toolInvocation.state === 'result') {
+            const result = toolInvocation.result
+            console.log('✨ Filter result:', result)
+            if (result?.matchingPrograms) {
+              console.log(`📊 Updating programs: ${result.matchingPrograms.length} programs`)
+              setVisiblePrograms(result.matchingPrograms.map((p: any) => ({
+                ...p,
+                status: 'eligible' as const,
+                isFiltered: true
+              })))
+            }
+          }
+        })
+      } else {
+        console.log('⚠️ No tool invocations in message')
+      }
     },
     onToolCall: ({ toolCall }) => {
-      console.log('Tool called:', toolCall)
-      
-      // Update programs when filter tool completes
-      if (toolCall.toolName === 'apply_filters' && 'result' in toolCall) {
-        const result = toolCall.result as any
-        if (result?.matchingPrograms) {
-          // Mark programs as filtered by adding a flag
-          setVisiblePrograms(result.matchingPrograms.map((p: any) => ({
-            ...p,
-            status: 'eligible' as const,
-            isFiltered: true
-          })))
-        }
-      }
+      console.log('🔧 Tool called:', toolCall)
     }
   })
 
@@ -43,6 +53,43 @@ export function ChatInterface() {
   useEffect(() => {
     setIsLoading(isLoading)
   }, [isLoading, setIsLoading])
+
+  // Also check messages for tool results in real-time
+  useEffect(() => {
+    const lastMessage = messages[messages.length - 1]
+    if (lastMessage?.role === 'assistant' && lastMessage.toolInvocations) {
+      console.log('📨 Message update - checking tools:', lastMessage.toolInvocations)
+      
+      lastMessage.toolInvocations.forEach((toolInvocation: any) => {
+        console.log(`🔎 Tool ${toolInvocation.toolName} - State: ${toolInvocation.state}`)
+        
+        if (toolInvocation.state === 'call') {
+          console.log('⏳ Tool is being called, waiting for result...')
+        } else if (toolInvocation.state === 'result') {
+          console.log('✅ Tool result received!')
+          
+          if (toolInvocation.toolName === 'apply_filters') {
+            const result = toolInvocation.result
+            console.log('🎯 Filter result:', result)
+            if (result?.matchingPrograms) {
+              console.log(`📊 Updating UI: ${result.matchingPrograms.length} programs`)
+              setVisiblePrograms(result.matchingPrograms.map((p: any) => ({
+                ...p,
+                status: 'eligible' as const,
+                isFiltered: true
+              })))
+            } else {
+              console.warn('⚠️ No matchingPrograms in result:', result)
+            }
+          }
+        } else if (toolInvocation.state === 'partial-call') {
+          console.log('🔄 Partial tool call...')
+        } else {
+          console.log('❓ Unknown tool state:', toolInvocation.state)
+        }
+      })
+    }
+  }, [messages, setVisiblePrograms])
 
   return (
     <div className="flex flex-col h-full bg-white">

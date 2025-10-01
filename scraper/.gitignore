@@ -1,0 +1,24 @@
+# Environment variables
+.env
+.env.local
+
+# Progress and state files
+progress.json
+progress.backup*.json
+progress.corrupted.json
+
+# Log files
+*.log
+
+# Test output
+test-output.json
+
+# Node modules
+node_modules/
+
+# macOS
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
