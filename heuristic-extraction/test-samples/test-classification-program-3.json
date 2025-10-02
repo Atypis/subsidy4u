@@ -1,0 +1,250 @@
+{
+  "program_id": "4bf850a1-5458-44cb-81da-4a54cd63810e",
+  "title": "Ausbildungsakquisiteure für Flüchtlinge",
+  "url": "https://www.foerderdatenbank.de/FDB/Content/DE/Foerderprogramm/Land/Bayern/ausbildungsakquisiteure-fluechtlinge.html",
+
+  "extraction_metadata": {
+    "extraction_date": "2025-10-01",
+    "sources_analyzed": ["kurztext", "volltext", "rechtliche_voraussetzungen", "richtlinie_excerpt"],
+    "ontology_version": "3.0 (14 filters, S+A tiers)",
+    "note": "Only 5000 chars of richtlinie available (excerpt)"
+  },
+
+  "14_filter_classification": {
+
+    "1_foerdergebiet": {
+      "value": ["Bayern"],
+      "source": "foerdergebiet field + volltext",
+      "quote": "Der Freistaat Bayern unterstützt die Integration in Ausbildung von Menschen mit Asylhintergrund",
+      "confidence": 1.0,
+      "filter_logic": "User from Bayern: ✅ KEEP | User from other Bundesland: ❌ FILTER OUT",
+      "null_handling": "null = ✅ KEEP (permissive)"
+    },
+
+    "2_foerderart": {
+      "value": ["Zuschuss"],
+      "source": "foerderart field + volltext",
+      "quote": "Sie bekommen die Förderung als Zuschuss.",
+      "confidence": 1.0,
+      "filter_logic": "User wants Zuschuss: ✅ KEEP | User wants only Darlehen: ❌ FILTER OUT",
+      "null_handling": "null = ✅ KEEP (permissive)"
+    },
+
+    "3_richtlinie_gueltigkeit_bis": {
+      "value": null,
+      "source": "richtlinie_excerpt checked",
+      "notes": "Richtlinie dated 7. Juli 2022. No explicit end date found in excerpt.",
+      "confidence": 0.6,
+      "filter_logic": "null = ✅ KEEP (assume still valid)",
+      "null_handling": "null = ✅ KEEP (permissive)",
+      "recommendation": "Full richtlinie needed to confirm validity period"
+    },
+
+    "4_ausschluss_unternehmen_in_schwierigkeiten": {
+      "value": null,
+      "source": "all sources checked",
+      "notes": "No mention. Program funds employment of coaches by municipalities/organizations, not direct business subsidies.",
+      "confidence": 1.0,
+      "filter_logic": "null = ✅ KEEP (no exclusion)",
+      "null_handling": "null = ✅ KEEP (permissive)"
+    },
+
+    "5_agvo_sektorausschluss": {
+      "value": null,
+      "source": "richtlinie_excerpt checked",
+      "notes": "No mention of AGVO sector exclusions. Program focuses on social integration, not economic sectors.",
+      "confidence": 0.9,
+      "filter_logic": "null = ✅ KEEP (no exclusions)",
+      "null_handling": "null = ✅ KEEP (permissive)"
+    },
+
+    "6_sicherheiten_erforderlich": {
+      "value": false,
+      "source": "all sources checked",
+      "notes": "Zuschuss program, no collateral mentioned",
+      "confidence": 1.0,
+      "filter_logic": "false = ✅ KEEP for all users",
+      "null_handling": "null = ✅ KEEP (assume no collateral)"
+    },
+
+    "7_foerderbetrag_max_eur": {
+      "value": null,
+      "source": "volltext checked",
+      "quote": "Die Höhe des Zuschusses beträgt bis zu 90 Prozent der zuwendungsfähigen Ausgaben.",
+      "notes": "Only percentage given (90%), no absolute max amount specified in available text",
+      "confidence": 0.7,
+      "filter_logic": "null = ✅ KEEP (unknown absolute limit)",
+      "null_handling": "null = ✅ KEEP (permissive)",
+      "foerdersatz_prozent": 90
+    },
+
+    "8_de_minimis_beihilfe": {
+      "value": null,
+      "source": "richtlinie_excerpt checked",
+      "notes": "No mention of De-minimis. State-level program, likely regular state aid.",
+      "confidence": 0.8,
+      "filter_logic": "null = ✅ KEEP (informational)",
+      "null_handling": "null = ✅ KEEP (permissive)"
+    },
+
+    "9_antragsberechtigte": {
+      "value": ["Kommune", "Verband/Vereinigung"],
+      "source_field": ["Kommune", "Verband/Vereinigung"],
+      "source_text": "rechtliche_voraussetzungen",
+      "quote": "Antragsberechtigt sind rechtsfähige Träger, die entsprechende Maßnahmen zur Qualifizierung und Arbeitsförderung über einen längeren Zeitraum durchgeführt haben (beispielsweise Kommunen).",
+      "detailed_entities": [
+        "Rechtsfähige Träger mit Erfahrung in Qualifizierung/Arbeitsförderung",
+        "Kommunen (als Beispiel genannt)"
+      ],
+      "confidence": 0.9,
+      "ontology_match": "✅ GOOD - Field lists 'Kommune' and 'Verband/Vereinigung', text confirms 'rechtsfähige Träger' with Kommunen as example",
+      "filter_logic": "User is Kommune or Verband: ✅ KEEP | User is Unternehmen: ❌ FILTER OUT",
+      "null_handling": "null = ✅ KEEP (assume all eligible)",
+      "additional_requirement": "Must have track record in Qualifizierung/Arbeitsförderung"
+    },
+
+    "10_kmu_erforderlich": {
+      "value": null,
+      "source": "all sources checked",
+      "notes": "Not applicable - beneficiaries are municipalities/organizations, not businesses",
+      "confidence": 1.0,
+      "filter_logic": "null = ✅ KEEP (N/A)",
+      "null_handling": "null = ✅ KEEP (permissive)"
+    },
+
+    "11_antragsfrist": {
+      "value": "rolling_with_contact",
+      "source": "volltext",
+      "quote": "Richten Sie Ihren Antrag bitte vor Beginn des Vorhabens ausschließlich in elektronischer Form per E-Mail [...] Bitte nehmen Sie mit dem Bayerischen Staatsministerium [...] Kontakt auf, bevor Sie einen Antrag stellen.",
+      "notes": "No fixed deadline, but application required BEFORE project start. Pre-application contact mandatory.",
+      "antragsfrist_typ": "laufend",
+      "confidence": 1.0,
+      "filter_logic": "✅ KEEP (rolling applications)",
+      "null_handling": "null = ✅ KEEP (assume rolling)",
+      "special_requirement": "Kontaktaufnahme vor Antragstellung erforderlich"
+    },
+
+    "12_mitarbeiter_limit_max": {
+      "value": null,
+      "source": "all sources checked",
+      "notes": "Not applicable - program funds coach positions, not about applicant company size",
+      "confidence": 1.0,
+      "filter_logic": "null = ✅ KEEP (N/A)",
+      "null_handling": "null = ✅ KEEP (permissive)"
+    },
+
+    "13_umsatz_limit_max_eur": {
+      "value": null,
+      "source": "all sources checked",
+      "notes": "Not applicable",
+      "confidence": 1.0,
+      "filter_logic": "null = ✅ KEEP (N/A)",
+      "null_handling": "null = ✅ KEEP (permissive)"
+    },
+
+    "14_unternehmensalter_max_jahre": {
+      "value": null,
+      "source": "all sources checked",
+      "notes": "Not applicable",
+      "confidence": 1.0,
+      "filter_logic": "null = ✅ KEEP (N/A)",
+      "null_handling": "null = ✅ KEEP (permissive)"
+    }
+  },
+
+  "additional_extracted_info": {
+    "program_focus": "Integration von Menschen mit Asylhintergrund und Migrationshintergrund in Ausbildung",
+    "target_group": {
+      "primary": [
+        "Asylberechtigte",
+        "Anerkannte Flüchtlinge",
+        "Subsidiär Schutzberechtigte",
+        "Personen mit Aufenthaltserlaubnis",
+        "Asylbewerber mit guter Bleibeperspektive",
+        "Geduldete mit Ausbildungsduldung",
+        "Geduldete mit Beschäftigungsduldung"
+      ],
+      "secondary": "Personen mit Migrationshintergrund und Integrationshindernissen (bei Bedarf)",
+      "source": "rechtliche_voraussetzungen"
+    },
+    "coach_activities": {
+      "phases": [
+        "Akquise",
+        "Beratung und Betreuung",
+        "Vermittlung",
+        "Nachsorge"
+      ],
+      "works_with": [
+        "Junge Teilnehmer der Zielgruppe",
+        "Ausbildungs-/Praktikumsbetriebe",
+        "Kooperations- und Netzwerkpartner"
+      ],
+      "source": "volltext + richtlinie_excerpt"
+    },
+    "foerdersatz_prozent": 90,
+    "eigenanteil_min_prozent": 10,
+    "requirements": [
+      "Fachlich qualifiziertes und geeignetes Personal",
+      "Länger durchgeführte Maßnahmen zur Qualifizierung und Arbeitsförderung (Track Record)",
+      "Arbeitsmarktpolitische Stellungnahme der Agentur für Arbeit bei Antragstellung"
+    ],
+    "antragsstelle": "Bayerisches Staatsministerium des Innern, für Sport und Integration",
+    "bewilligungsbehoerde": "Bayerisches Staatsministerium des Innern, für Sport und Integration (StMI)",
+    "application_format": "Elektronisch per E-Mail",
+    "pre_application_contact": "Mandatory",
+    "nebenbestimmungen": "ANBest-P (freie Träger) oder ANBest-K (kommunale Körperschaften)"
+  },
+
+  "final_filter_result": {
+    "should_display": true,
+    "reason": "✅ All filters passed (no exclusion criteria matched)",
+    "filters_passed": 14,
+    "filters_failed": 0,
+    "confidence_note": "Good confidence despite incomplete richtlinie - main eligibility criteria clear from volltext + rechtliche_voraussetzungen"
+  },
+
+  "data_quality_assessment": {
+    "foerderberechtigte_field_accuracy": "✅ ACCURATE - Field lists 'Kommune' and 'Verband/Vereinigung', text confirms 'rechtsfähige Träger' with track record requirement",
+    "completeness": "Good - Key info available in kurztext/volltext/rechtliche_voraussetzungen, richtlinie excerpt provides context",
+    "extraction_challenges": [
+      "Richtlinie too long (only 5000 chars available)",
+      "No absolute max funding amount, only percentage (90%)",
+      "Track record requirement is qualitative, not quantitative",
+      "Complex target group definitions (8 different asylum/migration statuses)"
+    ],
+    "missing_info": [
+      "richtlinie_gueltigkeit_bis (likely in full richtlinie)",
+      "foerderbetrag_max_eur (absolute amount)",
+      "Detailed funding calculation formulas"
+    ],
+    "positive_findings": [
+      "Clear eligibility criteria in rechtliche_voraussetzungen",
+      "Explicit mention of application process (email, pre-contact)",
+      "Well-defined target group",
+      "Clear program scope (coach employment)"
+    ],
+    "recommendations": [
+      "Full richtlinie needed for validity date",
+      "Consider adding 'track_record_required' as ontology field (appears in 2/3 programs tested)",
+      "Add 'mandatory_pre_application_contact' field for programs requiring consultation"
+    ]
+  },
+
+  "ontology_insights": {
+    "program_type": "Social integration / Labor market (refugees & migrants)",
+    "target_is_not_business": true,
+    "many_filters_not_applicable": [
+      "kmu_erforderlich",
+      "mitarbeiter_limit_max",
+      "umsatz_limit_max_eur",
+      "unternehmensalter_max_jahre"
+    ],
+    "new_pattern_found": {
+      "field": "track_record_required",
+      "value": true,
+      "evidence": "entsprechende Maßnahmen zur Qualifizierung und Arbeitsförderung über einen längeren Zeitraum durchgeführt haben",
+      "occurrence_estimate": "Medium - seen in 2/3 test programs (FAMICO: qualified personnel, Bayern: track record)",
+      "recommendation": "Consider adding to ontology if >2% of programs require proven experience"
+    }
+  }
+}

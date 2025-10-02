@@ -5,16 +5,19 @@
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",
-    "start": "next start"
+    "start": "next start",
+    "test-extraction": "tsx scripts/test-extraction.ts"
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^1.0.0",
     "@supabase/supabase-js": "^2.47.0",
     "ai": "^4.2.0",
     "clsx": "^2.1.1",
+    "dotenv": "^17.2.3",
     "framer-motion": "^11.15.0",
     "lucide-react": "^0.468.0",
     "next": "15.5.4",
+    "openai": "^4.104.0",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "react-markdown": "^10.1.0",
@@ -29,6 +32,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "tailwindcss": "^4",
+    "tsx": "^4.20.6",
     "typescript": "^5"
   }
 }

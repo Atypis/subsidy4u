@@ -1,0 +1,236 @@
+{
+  "program_id": "660126b8-1701-4fed-b878-bfec68e1e727",
+  "title": "Investition im Rahmen der Impact Facility",
+  "url": "https://www.foerderdatenbank.de/FDB/Content/DE/Foerderprogramm/Bund/KfW/impact-facility-863250.html",
+
+  "extraction_metadata": {
+    "sources_used": ["kurztext", "volltext", "rechtliche_voraussetzungen", "richtlinie"],
+    "extraction_date": "2025-10-01",
+    "total_chars": 2100,
+    "note": "Richtlinie is very short (only 'Informationen von KfW Capital Stand: Juni 2025')"
+  },
+
+  "canonical_ontology_mapping": {
+    "tier_1_universal": {
+      "entity_type": {
+        "value": ["venture_capital_fund"],
+        "source": "foerderberechtigte + volltext",
+        "original": ["Unternehmen"],
+        "actual_eligible": "VC-Impact-Fonds",
+        "confidence": 1.0,
+        "ontology_match": "⚠️ MISMATCH - foerderberechtigte says 'Unternehmen' but actual eligibility is VC funds only",
+        "note": "This is fund-of-funds, not direct company investment"
+      },
+
+      "region": {
+        "value": ["bundesweit"],
+        "additional_detail": {
+          "fund_location": ["Deutschland", "Europa"],
+          "target_company_location": ["Deutschland (minimum investment amount)"]
+        },
+        "source": "foerdergebiet + rechtliche_voraussetzungen",
+        "confidence": 1.0,
+        "ontology_match": "✅ PERFECT - But needs nuance: fund can be EU-wide, but must invest in DE companies"
+      },
+
+      "funding_type": {
+        "value": ["Beteiligung"],
+        "source": "foerderart + volltext",
+        "confidence": 1.0,
+        "ontology_match": "✅ PERFECT - Equity investment in VC funds"
+      }
+    },
+
+    "tier_2_high_value": {
+      "sme_required": {
+        "value": false,
+        "source": "all sources",
+        "notes": "Not applicable - this is fund-of-funds, not company-level",
+        "confidence": 1.0,
+        "ontology_match": "✅ CORRECT - But semantically wrong level (fund vs company)"
+      },
+
+      "excludes_companies_in_difficulty": {
+        "value": false,
+        "source": "all sources",
+        "confidence": 1.0,
+        "notes": "Not mentioned - likely because target companies are young/innovative",
+        "ontology_match": "✅ CORRECT"
+      },
+
+      "startup_friendly": {
+        "value": true,
+        "source": "rechtliche_voraussetzungen",
+        "quote": "Die Zielfonds investieren in junge, innovative und technologieorientierte Unternehmen",
+        "confidence": 1.0,
+        "ontology_match": "✅ PERFECT - Keywords 'junge' and 'innovative' clearly indicate startup focus"
+      },
+
+      "funding_amount": {
+        "value": {
+          "min_eur": null,
+          "max_eur": 15000000,
+          "alternative_max": "25% of fund volume",
+          "total_program_budget_eur": 200000000,
+          "program_duration": "bis 2030"
+        },
+        "source": "volltext",
+        "quote": "Die VC-Fonds können aus Mitteln der Fazilität bis maximal 15.000.000 EUR beziehungsweise bis zu 25 Prozent ihres Fondsvolumens erhalten",
+        "confidence": 1.0,
+        "ontology_match": "⚠️ COMPLEX - Max is €15M OR 25% (whichever is lower), not simple number"
+      },
+
+      "funding_rate_percent": {
+        "value": 25,
+        "source": "volltext",
+        "notes": "Up to 25% of fund volume",
+        "confidence": 1.0,
+        "ontology_match": "✅ PERFECT - Clear percentage constraint"
+      }
+    },
+
+    "tier_3_medium_value": {
+      "collateral_required": {
+        "value": false,
+        "source": "all sources",
+        "notes": "Not mentioned - equity investment doesn't require collateral",
+        "confidence": 1.0,
+        "ontology_match": "✅ PERFECT"
+      },
+
+      "company_age_max_years": {
+        "value": null,
+        "source": "all sources",
+        "notes": "Target companies described as 'junge' (young) but no specific number",
+        "confidence": 0.7,
+        "ontology_match": "⚠️ AMBIGUOUS - 'jung' implies age limit but not stated explicitly"
+      },
+
+      "employee_limit_max": {
+        "value": null,
+        "source": "all sources",
+        "confidence": 1.0,
+        "ontology_match": "✅ PERFECT - Not mentioned"
+      },
+
+      "revenue_limit_max_eur": {
+        "value": null,
+        "source": "all sources",
+        "confidence": 1.0,
+        "ontology_match": "✅ PERFECT - Not mentioned"
+      }
+    }
+  },
+
+  "NEW_ONTOLOGY_CANDIDATES": {
+    "sfdr_classification_required": {
+      "value": ["Article 8", "Article 9"],
+      "source": "rechtliche_voraussetzungen",
+      "quote": "Die Zielfonds müssen klassifiziert sein nach Artikel 8 oder 9 der Sustainable Finance Disclosure Regulation (SFDR)",
+      "occurrence_estimate": "LOW-MEDIUM - Only for ESG/Impact/sustainable investment programs",
+      "discriminatory_power": "VERY HIGH for ESG-focused users",
+      "user_value": "Hard requirement for sustainable finance compliance",
+      "recommendation": "⭐⭐⭐ CONDITIONAL ADD - Create 'esg_sustainability_requirements' category",
+      "check_frequency": "Unknown - need to query how many programs mention SFDR, Article 8/9, or ESG requirements"
+    },
+
+    "impact_measurement_required": {
+      "value": true,
+      "source": "rechtliche_voraussetzungen",
+      "details": {
+        "intentionality": true,
+        "measurement_framework": true,
+        "impact_carry_alignment": true
+      },
+      "quote": "Darlegen der eigenen Wirkungslogik... Definition von wirkungsbezogenen Zielen... Impact-Carry",
+      "occurrence_estimate": "LOW - Specific to impact investing programs",
+      "discriminatory_power": "VERY HIGH for impact investors",
+      "recommendation": "⭐⭐ MAYBE - Too niche unless many impact programs exist",
+      "check_frequency": "Unknown - need to search for 'Impact', 'Wirkung', 'soziale.*Rendite'"
+    },
+
+    "fund_of_funds_structure": {
+      "value": true,
+      "source": "volltext + rechtliche_voraussetzungen",
+      "notes": "Invests in VC funds, not directly in companies",
+      "occurrence_estimate": "LOW - Most programs are direct investment",
+      "discriminatory_power": "HIGH - Different target audience (fund managers vs companies)",
+      "recommendation": "⭐⭐⭐⭐ ADD - Critical distinction for entity_type taxonomy",
+      "new_entity_type_suggestion": "Add 'investment_fund' or 'vc_fund' to entity_type enum"
+    },
+
+    "geographic_investment_mandate": {
+      "value": {
+        "fund_location": ["Deutschland", "Europa"],
+        "minimum_investment_in_germany": "100% of KfW investment amount"
+      },
+      "source": "rechtliche_voraussetzungen",
+      "quote": "Hierbei muss mindestens die von KfW Capital investierte Summe in Unternehmen mit Sitz in Deutschland investiert werden",
+      "occurrence_estimate": "MEDIUM - Many federal programs have German investment requirements",
+      "discriminatory_power": "MEDIUM",
+      "recommendation": "⭐⭐⭐ ADD - 'domestic_investment_required' boolean field"
+    },
+
+    "due_diligence_process": {
+      "value": "market_standard_plus_impact_assessment",
+      "source": "volltext",
+      "quote": "durchlaufen die VC-Fonds die marktübliche Due Diligence (DD) von KfW Capital, unter ausgeweiteter Prüfung der Impact-bezogenen Fähigkeiten",
+      "occurrence_estimate": "MEDIUM - Many government investment programs have DD",
+      "discriminatory_power": "NONE - Not a filter criterion, just process info",
+      "recommendation": "❌ REJECT - Procedural detail, not eligibility constraint"
+    },
+
+    "independent_fund_management_required": {
+      "value": true,
+      "source": "rechtliche_voraussetzungen",
+      "quote": "Die Zielfonds haben ein unabhängiges privates Management",
+      "occurrence_estimate": "LOW - Specific to fund investment programs",
+      "discriminatory_power": "HIGH for this niche",
+      "recommendation": "⭐⭐ MAYBE - Only if we have >50 fund investment programs"
+    },
+
+    "track_record_required": {
+      "value": true,
+      "source": "rechtliche_voraussetzungen",
+      "quote": "welches für die Investitionsstrategie relevante (Impact-)Erfahrung und Track Record vorweisen kann",
+      "occurrence_estimate": "MEDIUM - Many investment/financing programs require experience",
+      "discriminatory_power": "MEDIUM",
+      "recommendation": "⭐⭐⭐ ADD - 'proven_experience_required' boolean",
+      "check_frequency": "Search for 'Track Record', 'Erfahrung', 'Nachweis.*Fähigkeiten'"
+    }
+  },
+
+  "extracted_heuristics_final": {
+    "entity_type": ["venture_capital_fund"],
+    "entity_type_note": "Actual eligibility is VC funds, but foerderberechtigte incorrectly says 'Unternehmen'",
+    "region": ["bundesweit"],
+    "funding_type": ["Beteiligung"],
+    "sme_required": false,
+    "excludes_companies_in_difficulty": false,
+    "startup_friendly": true,
+    "funding_amount_min_eur": null,
+    "funding_amount_max_eur": 15000000,
+    "funding_rate_percent": 25,
+    "collateral_required": false,
+    "company_age_max_years": null,
+    "employee_limit_max": null,
+    "revenue_limit_max_eur": null,
+    "sfdr_classification_required": ["Article 8", "Article 9"],
+    "impact_measurement_required": true,
+    "fund_of_funds": true,
+    "domestic_investment_required": true,
+    "track_record_required": true,
+    "independent_management_required": true
+  },
+
+  "confidence_scores": {
+    "entity_type": 1.0,
+    "region": 1.0,
+    "funding_type": 1.0,
+    "startup_friendly": 1.0,
+    "funding_amount_max": 1.0,
+    "funding_rate_percent": 1.0,
+    "sfdr_requirement": 1.0,
+    "impact_measurement": 1.0
+  }
+}

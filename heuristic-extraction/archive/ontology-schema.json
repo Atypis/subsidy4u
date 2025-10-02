@@ -1,0 +1,256 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Subsidy Program Heuristic Ontology",
+  "description": "Evidence-based ontology for extracting filterable heuristics from German subsidy programs. Only includes patterns found in >2% of programs (>50 programs).",
+  "version": "1.0.0",
+
+  "extraction_sources": {
+    "rechtliche_voraussetzungen": {
+      "purpose": "Legal eligibility requirements and hard constraints",
+      "avg_length_chars": 1086,
+      "coverage": "82% of programs"
+    },
+    "volltext": {
+      "purpose": "Funding amounts, rates, and detailed descriptions",
+      "avg_length_chars": 3000,
+      "coverage": "84% of programs"
+    }
+  },
+
+  "canonical_heuristics": {
+    "tier_1_universal": {
+      "entity_type": {
+        "type": "array",
+        "items": {
+          "enum": [
+            "company",
+            "startup_founder",
+            "municipality",
+            "public_institution",
+            "research_institution",
+            "university",
+            "association",
+            "individual",
+            "education_institution"
+          ]
+        },
+        "source": "foerderberechtigte + rechtliche_voraussetzungen",
+        "occurrence": "99%",
+        "discriminatory_power": "high"
+      },
+
+      "region": {
+        "type": "array",
+        "items": {
+          "enum": [
+            "bundesweit",
+            "Baden-Württemberg",
+            "Bayern",
+            "Berlin",
+            "Brandenburg",
+            "Bremen",
+            "Hamburg",
+            "Hessen",
+            "Mecklenburg-Vorpommern",
+            "Niedersachsen",
+            "Nordrhein-Westfalen",
+            "Rheinland-Pfalz",
+            "Saarland",
+            "Sachsen",
+            "Sachsen-Anhalt",
+            "Schleswig-Holstein",
+            "Thüringen"
+          ]
+        },
+        "source": "foerdergebiet",
+        "occurrence": "99%",
+        "discriminatory_power": "very_high"
+      },
+
+      "funding_type": {
+        "type": "array",
+        "items": {
+          "enum": ["Zuschuss", "Darlehen", "Beteiligung", "Bürgschaft", "Garantie", "Sonstige"]
+        },
+        "source": "foerderart",
+        "occurrence": "99%",
+        "discriminatory_power": "medium"
+      }
+    },
+
+    "tier_2_high_value": {
+      "sme_required": {
+        "type": "boolean",
+        "source": "rechtliche_voraussetzungen",
+        "extraction_keywords": ["KMU", "kleine und mittlere Unternehmen", "Klein- und Mittelunternehmen"],
+        "occurrence": "21% (430 programs)",
+        "discriminatory_power": "high",
+        "implications": {
+          "employee_max": 250,
+          "revenue_max_eur": 50000000,
+          "note": "Per EU KMU definition"
+        }
+      },
+
+      "excludes_companies_in_difficulty": {
+        "type": "boolean",
+        "source": "rechtliche_voraussetzungen",
+        "extraction_keywords": ["Unternehmen in Schwierigkeiten", "Ausschluss.*Schwierigkeiten"],
+        "occurrence": "12% (247 programs)",
+        "discriminatory_power": "very_high",
+        "impact": "HARD_BLOCKER"
+      },
+
+      "startup_friendly": {
+        "type": "boolean",
+        "source": "rechtliche_voraussetzungen",
+        "extraction_keywords": ["Existenzgründ", "Gründung", "Start-up", "startup"],
+        "occurrence": "9% (184 programs)",
+        "discriminatory_power": "high",
+        "may_imply": {
+          "company_age_max_years": 5
+        }
+      },
+
+      "funding_amount": {
+        "type": "object",
+        "properties": {
+          "min_eur": {"type": ["number", "null"]},
+          "max_eur": {"type": ["number", "null"]},
+          "currency": {"type": "string", "const": "EUR"}
+        },
+        "source": "volltext (primary), rechtliche_voraussetzungen (secondary)",
+        "extraction_patterns": [
+          "bis zu EUR X",
+          "maximal EUR X",
+          "höchstens EUR X",
+          "mindestens EUR X",
+          "ab EUR X"
+        ],
+        "occurrence": "53% mention amounts (1,087 programs)",
+        "discriminatory_power": "very_high",
+        "extraction_confidence_threshold": 0.7
+      },
+
+      "funding_rate_percent": {
+        "type": ["number", "null"],
+        "source": "volltext",
+        "extraction_patterns": [
+          "X% der förderfähigen Kosten",
+          "bis zu X%",
+          "Fördersatz X%",
+          "Förderquote X%"
+        ],
+        "occurrence": "69% mention percentages (1,401 programs)",
+        "discriminatory_power": "medium",
+        "note": "Indicates co-financing requirement"
+      }
+    },
+
+    "tier_3_medium_value": {
+      "collateral_required": {
+        "type": "boolean",
+        "source": "rechtliche_voraussetzungen",
+        "extraction_keywords": ["banküblich", "Sicherheiten", "Besicherung"],
+        "occurrence": "4% (79 programs)",
+        "discriminatory_power": "high",
+        "impact": "HARD_BLOCKER for some users"
+      },
+
+      "company_age_max_years": {
+        "type": ["number", "null"],
+        "source": "rechtliche_voraussetzungen",
+        "extraction_patterns": [
+          "nicht länger als X Jahre",
+          "maximal X Jahre seit Gründung",
+          "weniger als X Jahre",
+          "Eintragung.*nicht länger als X Jahre"
+        ],
+        "occurrence": "2% (36 programs)",
+        "discriminatory_power": "very_high when present",
+        "note": "Only extract when explicitly stated with number"
+      },
+
+      "employee_limit_max": {
+        "type": ["number", "null"],
+        "source": "rechtliche_voraussetzungen",
+        "extraction_patterns": [
+          "nicht mehr als X Beschäftigte",
+          "maximal X Mitarbeiter",
+          "höchstens X Arbeitnehmer",
+          "bis zu X Beschäftigte"
+        ],
+        "occurrence": "1% explicit (23 programs), 21% implicit via SME",
+        "discriminatory_power": "high",
+        "note": "Often implied by sme_required=true (250 employees)"
+      },
+
+      "revenue_limit_max_eur": {
+        "type": ["number", "null"],
+        "source": "rechtliche_voraussetzungen",
+        "extraction_patterns": [
+          "Jahresumsatz.*höchstens EUR X",
+          "Umsatz.*maximal EUR X",
+          "Jahresumsatz von bis zu EUR X"
+        ],
+        "occurrence": "3% explicit (61 programs), 21% implicit via SME",
+        "discriminatory_power": "high",
+        "note": "Often implied by sme_required=true (€50M)"
+      }
+    },
+
+    "excluded_program_specific_noise": {
+      "examples": [
+        "seminar_participant_fee_max",
+        "minimum_participant_count",
+        "online_attendance_percentage",
+        "sfdr_article_classification",
+        "specific_regulatory_certifications"
+      ],
+      "rule": "Only extract patterns occurring in >50 programs (2% threshold)",
+      "rationale": "Program-specific details don't provide discriminatory value for filtering"
+    }
+  },
+
+  "extraction_output_schema": {
+    "type": "object",
+    "required": ["program_id", "extracted_heuristics", "confidence_scores"],
+    "properties": {
+      "program_id": {"type": "string"},
+
+      "extracted_heuristics": {
+        "type": "object",
+        "properties": {
+          "entity_type": {"type": "array"},
+          "region": {"type": "array"},
+          "funding_type": {"type": "array"},
+          "sme_required": {"type": "boolean"},
+          "excludes_companies_in_difficulty": {"type": "boolean"},
+          "startup_friendly": {"type": "boolean"},
+          "funding_amount_min_eur": {"type": ["number", "null"]},
+          "funding_amount_max_eur": {"type": ["number", "null"]},
+          "funding_rate_percent": {"type": ["number", "null"]},
+          "collateral_required": {"type": "boolean"},
+          "company_age_max_years": {"type": ["number", "null"]},
+          "employee_limit_max": {"type": ["number", "null"]},
+          "revenue_limit_max_eur": {"type": ["number", "null"]}
+        }
+      },
+
+      "confidence_scores": {
+        "type": "object",
+        "description": "Confidence (0.0-1.0) for each extracted field",
+        "properties": {
+          "entity_type": {"type": "number"},
+          "funding_amount": {"type": "number"},
+          "sme_required": {"type": "number"}
+        }
+      },
+
+      "extraction_notes": {
+        "type": "string",
+        "description": "Any ambiguities, conflicts, or important context"
+      }
+    }
+  }
+}

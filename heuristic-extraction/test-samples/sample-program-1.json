@@ -1,0 +1,98 @@
+{
+  "program_id": "a40ab725-c2a5-4808-a565-91755773603b",
+  "title": "Förderung im Rahmen des IMPULS-Programms zur Qualifizierung",
+  "url": "https://www.foerderdatenbank.de/FDB/Content/DE/Foerderprogramm/Land/Hamburg/impuls-programm-zur-qualifizierung.html",
+
+  "raw_data": {
+    "foerderart": ["Zuschuss"],
+    "foerdergebiet": ["Hamburg"],
+    "foerderbereich": ["Aus- & Weiterbildung", "Energieeffizienz & Erneuerbare Energien"],
+    "foerderberechtigte": ["Bildungseinrichtung", "Verband/Vereinigung"],
+    "kurztext": "Wenn Sie in Hamburg Veranstaltungen oder Seminare zu nachhaltigem, energieeffizientem und ressourcenschonendem Bauen durchführen, können Sie unter bestimmten Voraussetzungen einen Zuschuss erhalten.",
+    "rechtliche_voraussetzungen": "Die Förderung ist an folgende Bedingungen geknüpft:\n\nAntragsberechtigt sind Sie als in der Weiterbildung tätige Institution mit Sitz in Hamburg.\n\nSie müssen eine ordnungsgemäße Geschäftsführung sicherstellen und die bestimmungsgemäße Verwendung der Mittel gewährleisten und nachweisen.\n\nDie Teilnehmendenzahl je Seminar muss mindestens 10 betragen. Bei 2 aufeinanderfolgenden Seminaren müssen mindestens 75 Prozent der Teilnehmenden eine positive Bewertung abgeben. Bei Online-Seminaren werden nur Teilnehmerinnen und Teilnehmer aus der Metropolregion Hamburg gefördert, die an mindestens 75 Prozent der Veranstaltung teilgenommen haben.\n\nWenn Sie eine Gebühr für Teilnehmende erheben, darf diese maximal 100,00 EUR (bei einem bis zu vierstündigen Seminar) und 150,00 EUR (bei einem mehr als sechsstündigen Seminar) je Teilnehmerin oder Teilnehmer betragen.\n\nNicht gefördert werden Unternehmen in Schwierigkeiten sowie bestimmte Tätigkeiten und Branchen."
+  },
+
+  "extracted_heuristics": {
+    "eligibility": {
+      "entity_type": ["Bildungseinrichtung", "Verband/Vereinigung"],
+      "entity_type_normalized": ["educational_institution", "association"],
+      "location_requirement": {
+        "required": true,
+        "type": "headquarter",
+        "locations": ["Hamburg"]
+      },
+      "sector_focus": ["Aus- & Weiterbildung", "Energieeffizienz & Erneuerbare Energien"],
+      "sector_focus_normalized": ["education_training", "energy_efficiency", "renewable_energy"]
+    },
+
+    "company_constraints": {
+      "size": {
+        "employee_min": null,
+        "employee_max": null,
+        "revenue_min": null,
+        "revenue_max": null,
+        "sme_required": false
+      },
+      "age": {
+        "min_years": null,
+        "max_years": null
+      },
+      "financial_health": {
+        "excludes_companies_in_difficulty": true
+      }
+    },
+
+    "funding_details": {
+      "type": "Zuschuss",
+      "type_normalized": "grant",
+      "amount": {
+        "min": null,
+        "max": null,
+        "currency": "EUR",
+        "notes": "Not specified in rechtliche_voraussetzungen"
+      },
+      "co_financing_required": false,
+      "collateral_required": false
+    },
+
+    "requirements": {
+      "minimum_participants": 10,
+      "participant_fee_limit": {
+        "max_short_seminar": 100.00,
+        "max_long_seminar": 150.00,
+        "currency": "EUR",
+        "notes": "Short = up to 4 hours, Long = more than 6 hours"
+      },
+      "online_seminars": {
+        "geographic_restriction": "Metropolregion Hamburg",
+        "minimum_attendance": "75%"
+      },
+      "quality_requirement": {
+        "minimum_positive_feedback": "75%",
+        "applies_to": "2 consecutive seminars"
+      }
+    },
+
+    "temporal": {
+      "application_deadline": null,
+      "program_end_date": null,
+      "funding_period": null,
+      "application_type": "rolling"
+    },
+
+    "exclusions": {
+      "companies_in_difficulty": true,
+      "specific_sectors": [],
+      "specific_activities": []
+    },
+
+    "confidence_scores": {
+      "entity_type": 1.0,
+      "location_requirement": 1.0,
+      "financial_health_exclusion": 1.0,
+      "minimum_participants": 1.0,
+      "participant_fee_limit": 1.0,
+      "funding_amount": 0.0
+    }
+  }
+}

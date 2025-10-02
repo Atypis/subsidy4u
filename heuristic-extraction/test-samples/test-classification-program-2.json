@@ -1,0 +1,238 @@
+{
+  "program_id": "8097d0d3-6363-414b-9b74-f419908f0503",
+  "title": "„REGIO AKTIV" – Familien stärken – Perspektiven eröffnen (FAMICO)",
+  "url": "https://www.foerderdatenbank.de/FDB/Content/DE/Foerderprogramm/Land/Sachsen-Anhalt/regio-aktiv-famico.html",
+
+  "extraction_metadata": {
+    "extraction_date": "2025-10-01",
+    "sources_analyzed": ["kurztext", "volltext", "rechtliche_voraussetzungen", "richtlinie_excerpt"],
+    "ontology_version": "3.0 (14 filters, S+A tiers)",
+    "note": "Only 5000 chars of richtlinie available (excerpt)"
+  },
+
+  "14_filter_classification": {
+
+    "1_foerdergebiet": {
+      "value": ["Sachsen-Anhalt"],
+      "source": "foerdergebiet field + volltext",
+      "quote": "Das Land Sachsen-Anhalt fördert Sie im Rahmen des Programms „REGIO AKTIV"",
+      "confidence": 1.0,
+      "filter_logic": "User from Sachsen-Anhalt: ✅ KEEP | User from other Bundesland: ❌ FILTER OUT",
+      "null_handling": "null = ✅ KEEP (permissive)"
+    },
+
+    "2_foerderart": {
+      "value": ["Zuschuss"],
+      "source": "foerderart field + volltext",
+      "quote": "Sie erhalten die Förderung als Zuschuss.",
+      "confidence": 1.0,
+      "filter_logic": "User wants Zuschuss: ✅ KEEP | User wants only Darlehen: ❌ FILTER OUT",
+      "null_handling": "null = ✅ KEEP (permissive)"
+    },
+
+    "3_richtlinie_gueltigkeit_bis": {
+      "value": null,
+      "source": "richtlinie_excerpt checked",
+      "notes": "Richtlinie dated 6. Juni 2022, but no explicit end date found in excerpt. Likely long-term ESF+ program (typically run 2021-2027).",
+      "confidence": 0.7,
+      "filter_logic": "null = ✅ KEEP (assume still valid)",
+      "null_handling": "null = ✅ KEEP (permissive)",
+      "recommendation": "Need full richtlinie to confirm validity period"
+    },
+
+    "4_ausschluss_unternehmen_in_schwierigkeiten": {
+      "value": null,
+      "source": "all sources checked",
+      "notes": "No mention of exclusion. Program targets unemployed individuals from families (Rechtskreis SGB II), not companies.",
+      "confidence": 1.0,
+      "filter_logic": "null = ✅ KEEP (no exclusion)",
+      "null_handling": "null = ✅ KEEP (permissive)",
+      "special_note": "Not applicable - target is individuals, not businesses"
+    },
+
+    "5_agvo_sektorausschluss": {
+      "value": null,
+      "source": "richtlinie_excerpt checked",
+      "notes": "ESF+ program, but no AGVO sector exclusions mentioned in excerpt. Likely subject to EU regulations but not explicitly stated.",
+      "confidence": 0.8,
+      "filter_logic": "null = ✅ KEEP (no exclusions found)",
+      "null_handling": "null = ✅ KEEP (permissive)"
+    },
+
+    "6_sicherheiten_erforderlich": {
+      "value": false,
+      "source": "all sources checked",
+      "notes": "Zuschuss program for municipalities, no collateral mentioned",
+      "confidence": 1.0,
+      "filter_logic": "false = ✅ KEEP for all users",
+      "null_handling": "null = ✅ KEEP (assume no collateral)"
+    },
+
+    "7_foerderbetrag_max_eur": {
+      "value": null,
+      "source": "volltext checked",
+      "quote": "Die Höhe des Zuschusses ist davon abhängig, welches Vorhaben Sie umsetzen.",
+      "notes": "Amount depends on project scope. No specific max mentioned in available text.",
+      "confidence": 0.6,
+      "filter_logic": "null = ✅ KEEP (unknown limit)",
+      "null_handling": "null = ✅ KEEP (permissive)",
+      "recommendation": "Full richtlinie would contain funding rates/amounts"
+    },
+
+    "8_de_minimis_beihilfe": {
+      "value": false,
+      "source": "richtlinie_excerpt",
+      "notes": "ESF+ program (EU co-financed), not De-minimis. Regular state aid under ESF regulations.",
+      "confidence": 0.9,
+      "filter_logic": "false = No De-minimis limit applies",
+      "null_handling": "null = ✅ KEEP (informational)",
+      "funding_source": "Europäischer Sozialfonds Plus (ESF+) + Land Sachsen-Anhalt"
+    },
+
+    "9_antragsberechtigte": {
+      "value": ["Kommune"],
+      "source_field": ["Kommune"],
+      "source_text": "rechtliche_voraussetzungen",
+      "quote": "Antragsberechtigt sind die Landkreise und kreisfreien Städte in Sachsen-Anhalt.",
+      "detailed_entities": [
+        "Landkreise",
+        "Kreisfreie Städte"
+      ],
+      "confidence": 1.0,
+      "ontology_match": "✅ PERFECT - Field says 'Kommune', text confirms 'Landkreise und kreisfreie Städte'",
+      "filter_logic": "User is Kommune: ✅ KEEP | User is Unternehmen: ❌ FILTER OUT",
+      "null_handling": "null = ✅ KEEP (assume all eligible)"
+    },
+
+    "10_kmu_erforderlich": {
+      "value": null,
+      "source": "all sources checked",
+      "notes": "Not applicable - beneficiaries are municipalities (Kommunen), not companies",
+      "confidence": 1.0,
+      "filter_logic": "null = ✅ KEEP (N/A for this program type)",
+      "null_handling": "null = ✅ KEEP (permissive)"
+    },
+
+    "11_antragsfrist": {
+      "value": null,
+      "source": "volltext + richtlinie_excerpt checked",
+      "notes": "No specific deadline mentioned in available text",
+      "confidence": 0.5,
+      "filter_logic": "null = ✅ KEEP (assume rolling applications)",
+      "null_handling": "null = ✅ KEEP (permissive)",
+      "recommendation": "Full richtlinie likely contains application procedure details"
+    },
+
+    "12_mitarbeiter_limit_max": {
+      "value": null,
+      "source": "all sources checked",
+      "notes": "Not applicable - program for municipalities employing coaches, not company size restriction",
+      "confidence": 1.0,
+      "filter_logic": "null = ✅ KEEP (N/A)",
+      "null_handling": "null = ✅ KEEP (permissive)"
+    },
+
+    "13_umsatz_limit_max_eur": {
+      "value": null,
+      "source": "all sources checked",
+      "notes": "Not applicable - municipalities don't have 'revenue' in business sense",
+      "confidence": 1.0,
+      "filter_logic": "null = ✅ KEEP (N/A)",
+      "null_handling": "null = ✅ KEEP (permissive)"
+    },
+
+    "14_unternehmensalter_max_jahre": {
+      "value": null,
+      "source": "all sources checked",
+      "notes": "Not applicable - municipalities don't have 'founding year'",
+      "confidence": 1.0,
+      "filter_logic": "null = ✅ KEEP (N/A)",
+      "null_handling": "null = ✅ KEEP (permissive)"
+    }
+  },
+
+  "additional_extracted_info": {
+    "program_framework": "ESF+ (Europäischer Sozialfonds Plus)",
+    "program_duration": {
+      "value": "6 Jahre",
+      "extensible": true,
+      "source": "volltext",
+      "quote": "Der Förderzeitraum beträgt 6 Jahre und kann verlängert werden."
+    },
+    "target_group": {
+      "primary": "Arbeitslose Alleinerziehende",
+      "secondary": "Arbeitslose Leistungsberechtigte aus Familienbedarfsgemeinschaften",
+      "legal_basis": "Rechtskreis SGB II (Zweites Buch Sozialgesetzbuch)",
+      "requirement": "mindestens 1 Kind im Haushalt",
+      "source": "rechtliche_voraussetzungen"
+    },
+    "project_scope": "Familienintegrationscoaches",
+    "coaching_elements": [
+      "Intensive ganzheitliche individuelle Betreuung",
+      "Stärkenorientierte Beratung ausgewählter Familien",
+      "Begleitete Integration in sozialversicherungspflichtige Beschäftigung oder Ausbildung"
+    ],
+    "participation_duration": {
+      "max_months": 18,
+      "nachbetreuung_months": 6,
+      "unterbrechung_months": 3,
+      "source": "rechtliche_voraussetzungen",
+      "quote": "Die individuelle Verweildauer der Teilnehmenden beträgt normalerweise bis zu 18 Monate zuzüglich Nachbetreuung von bis zu 6 Monaten."
+    },
+    "eigenanteil_min_prozent": 10,
+    "requirements": [
+      "Fachlich qualifiziertes und geeignetes Personal",
+      "Arbeitsmarkpolitische Stellungnahme der Agentur für Arbeit erforderlich"
+    ],
+    "regional_coordination": {
+      "rak": "Regionale Arbeitskreise",
+      "lako": "Landeskoordinationsgruppe",
+      "jugendberufsagenturen": "Wichtige Rolle im Übergangssystem"
+    },
+    "antragsstelle": "Landesverwaltungsamt Sachsen-Anhalt"
+  },
+
+  "final_filter_result": {
+    "should_display": true,
+    "reason": "✅ All filters passed (no exclusion criteria matched)",
+    "filters_passed": 14,
+    "filters_failed": 0,
+    "confidence_note": "Medium confidence due to incomplete richtlinie (only 5000 char excerpt)"
+  },
+
+  "data_quality_assessment": {
+    "foerderberechtigte_field_accuracy": "✅ ACCURATE - Field 'Kommune' matches text 'Landkreise und kreisfreie Städte'",
+    "completeness": "Medium - Missing full richtlinie (only 5000 chars)",
+    "extraction_challenges": [
+      "Richtlinie too long (exceeded 25k token limit), only 5000 chars available",
+      "No explicit validity end date found in excerpt",
+      "No specific funding amounts mentioned in available text",
+      "Complex ESF+ program structure with multiple coordination levels"
+    ],
+    "missing_critical_info": [
+      "richtlinie_gueltigkeit_bis (likely in full richtlinie)",
+      "foerderbetrag_max_eur (likely in full richtlinie)",
+      "antragsfrist (likely in full richtlinie)",
+      "Detailed funding rates and calculations"
+    ],
+    "recommendations": [
+      "Need strategy to handle very long richtlinie texts (>25k tokens)",
+      "Consider chunking or extracting only relevant sections",
+      "ESF+ programs typically run 2021-2027, could infer validity",
+      "Query database for full richtlinie length to understand scale of problem"
+    ]
+  },
+
+  "ontology_insights": {
+    "program_type": "Social policy / Labor market integration",
+    "target_is_not_business": true,
+    "many_filters_not_applicable": [
+      "kmu_erforderlich",
+      "mitarbeiter_limit_max",
+      "umsatz_limit_max_eur",
+      "unternehmensalter_max_jahre",
+      "ausschluss_unternehmen_in_schwierigkeiten"
+    ],
+    "note": "Ontology is business-focused. Social programs targeting individuals have limited filter applicability."
+  }
+}

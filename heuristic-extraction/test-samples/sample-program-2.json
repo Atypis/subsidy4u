@@ -1,0 +1,128 @@
+{
+  "program_id": "660126b8-1701-4fed-b878-bfec68e1e727",
+  "title": "Investition im Rahmen der Impact Facility",
+  "url": "https://www.foerderdatenbank.de/FDB/Content/DE/Foerderprogramm/Bund/KfW/impact-facility-863250.html",
+
+  "raw_data": {
+    "foerderart": ["Beteiligung"],
+    "foerdergebiet": ["bundesweit"],
+    "foerderbereich": ["Digitalisierung", "Energieeffizienz & Erneuerbare Energien", "Forschung & Innovation (themenoffen)"],
+    "foerderberechtigte": ["Unternehmen"],
+    "kurztext": "KfW Capital investiert über die Impact Facility in deutsche und europäische VC-Fonds, die neben der finanziellen Rendite auch darauf abzielen, durch ihre Investitionen messbare soziale oder ökologische Effekte zu erzielen.",
+    "rechtliche_voraussetzungen": "Die Zielfonds müssen das Thema Impact durch folgende Punkte systematisch adressieren:\n\nDarlegen der eigenen Wirkungslogik, um thematische Wirkungsbereiche, deren gesellschaftlichen Bedarf und den Ansatz zur Erreichung der Wirkung aufzuzeigen (Intentionalität)Definition von wirkungsbezogenen Zielen und Konzept zur kontinuierlichen Messung der ZielerreichungBerücksichtigung der Erreichung der oben genannten Impact Ziele an der Partizipation des Fondsmanagers an Gewinnen (Carried Interest) durch sogenannte Impact-Carry\n\nWeitere Kriterien, die die Fonds erfüllen müssen:\n\nDer Fondssitz befindet sich in Deutschland oder Europa.Die Zielfonds müssen klassifiziert sein nach Artikel 8 oder 9 der Sustainable Finance Disclosure Regulation (SFDR).Die Zielfonds investieren in junge, innovative und technologieorientierte Unternehmen mit einer dem Geschäftsmodell inhärenten Wirkung. Hierbei muss mindestens die von KfW Capital investierte Summe in Unternehmen mit Sitz in Deutschland investiert werden.Die Zielfonds haben ein unabhängiges privates Management, welches für die Investitionsstrategie relevante (Impact-)Erfahrung und Track Record vorweisen kann.Die Zielfonds haben klare Investitions- und Exitstrategien."
+  },
+
+  "extracted_heuristics": {
+    "eligibility": {
+      "entity_type": ["VC-Fonds"],
+      "entity_type_normalized": ["venture_capital_fund"],
+      "location_requirement": {
+        "required": true,
+        "type": "fund_headquarters",
+        "locations": ["Deutschland", "Europa"]
+      },
+      "target_company_location": {
+        "required": true,
+        "minimum_investment_in_germany": "100%",
+        "notes": "At least the amount invested by KfW must be invested in German companies"
+      },
+      "sector_focus": ["Digitalisierung", "Energieeffizienz & Erneuerbare Energien", "Forschung & Innovation"],
+      "sector_focus_normalized": ["digitalization", "energy_efficiency", "renewable_energy", "research_innovation"]
+    },
+
+    "company_constraints": {
+      "size": {
+        "employee_min": null,
+        "employee_max": null,
+        "revenue_min": null,
+        "revenue_max": null,
+        "sme_required": false
+      },
+      "age": {
+        "min_years": null,
+        "max_years": null,
+        "notes": "Targets 'young' companies but not explicitly defined"
+      },
+      "financial_health": {
+        "excludes_companies_in_difficulty": false
+      },
+      "company_profile": {
+        "required_characteristics": ["young", "innovative", "technology_oriented"],
+        "inherent_impact_required": true
+      }
+    },
+
+    "funding_details": {
+      "type": "Beteiligung",
+      "type_normalized": "equity_investment",
+      "structure": "VC fund investment (not direct company investment)",
+      "amount": {
+        "min": null,
+        "max": null,
+        "currency": "EUR",
+        "notes": "Investment amounts not specified"
+      },
+      "co_financing_required": false,
+      "collateral_required": false
+    },
+
+    "requirements": {
+      "impact_framework": {
+        "intentionality": {
+          "required": true,
+          "description": "Must demonstrate impact logic, societal need, and approach to achieving impact"
+        },
+        "measurement": {
+          "required": true,
+          "description": "Must define impact-related goals and continuous measurement concept"
+        },
+        "impact_carry": {
+          "required": true,
+          "description": "Fund manager's profit participation must consider achievement of impact goals"
+        }
+      },
+      "regulatory_compliance": {
+        "sfdr_classification": ["Article 8", "Article 9"],
+        "sfdr_classification_required": true
+      },
+      "fund_management": {
+        "independence_required": true,
+        "experience_required": ["impact_investing", "relevant_investment_strategy"],
+        "track_record_required": true
+      },
+      "strategy": {
+        "clear_investment_strategy": true,
+        "clear_exit_strategy": true
+      }
+    },
+
+    "temporal": {
+      "application_deadline": null,
+      "program_end_date": null,
+      "funding_period": null,
+      "application_type": "rolling"
+    },
+
+    "exclusions": {
+      "companies_in_difficulty": false,
+      "specific_sectors": [],
+      "specific_activities": []
+    },
+
+    "special_characteristics": {
+      "is_fund_of_funds": true,
+      "direct_company_investment": false,
+      "impact_focused": true,
+      "esg_compliant": true
+    },
+
+    "confidence_scores": {
+      "entity_type": 1.0,
+      "location_requirement": 1.0,
+      "sfdr_requirement": 1.0,
+      "impact_framework": 1.0,
+      "target_company_profile": 0.7,
+      "funding_amount": 0.0
+    }
+  }
+}

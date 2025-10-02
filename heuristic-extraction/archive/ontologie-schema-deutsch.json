@@ -1,0 +1,425 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Förderprogramm Heuristik Ontologie (Deutsch)",
+  "description": "Evidenzbasierte Ontologie zur Extraktion filterbarer Heuristiken aus deutschen Förderprogrammen. Enthält nur Muster die in >2% der Programme vorkommen (>50 Programme).",
+  "version": "2.0.0",
+  "sprache": "de",
+
+  "extraktionsquellen": {
+    "rechtliche_voraussetzungen": {
+      "zweck": "Rechtliche Fördervoraussetzungen und harte Einschränkungen",
+      "durchschnittliche_laenge": 1086,
+      "abdeckung": "82% der Programme"
+    },
+    "volltext": {
+      "zweck": "Förderbeträge, Fördersätze und detaillierte Beschreibungen",
+      "durchschnittliche_laenge": 3000,
+      "abdeckung": "84% der Programme"
+    },
+    "richtlinie": {
+      "zweck": "Vollständige Rechtsgrundlagen, Gültigkeitsdaten, EU-Verordnungen",
+      "durchschnittliche_laenge": 23483,
+      "abdeckung": "84% der Programme"
+    }
+  },
+
+  "kanonische_heuristiken": {
+    "stufe_1_universal": {
+      "antragsberechtigte": {
+        "typ": "array",
+        "items": {
+          "enum": [
+            "unternehmen",
+            "existenzgruender",
+            "kommune",
+            "oeffentliche_einrichtung",
+            "forschungseinrichtung",
+            "hochschule",
+            "verband_vereinigung",
+            "privatperson",
+            "bildungseinrichtung",
+            "investment_fonds"
+          ]
+        },
+        "quelle": "foerderberechtigte + rechtliche_voraussetzungen",
+        "vorkommen": "99%",
+        "diskriminierungskraft": "hoch",
+        "hinweis": "Hauptfilter - eliminiert 40-70% sofort"
+      },
+
+      "foerdergebiet": {
+        "typ": "array",
+        "items": {
+          "enum": [
+            "bundesweit",
+            "Baden-Württemberg",
+            "Bayern",
+            "Berlin",
+            "Brandenburg",
+            "Bremen",
+            "Hamburg",
+            "Hessen",
+            "Mecklenburg-Vorpommern",
+            "Niedersachsen",
+            "Nordrhein-Westfalen",
+            "Rheinland-Pfalz",
+            "Saarland",
+            "Sachsen",
+            "Sachsen-Anhalt",
+            "Schleswig-Holstein",
+            "Thüringen"
+          ]
+        },
+        "quelle": "foerdergebiet",
+        "vorkommen": "99%",
+        "diskriminierungskraft": "sehr_hoch",
+        "hinweis": "Eliminiert 70-80% der verbleibenden Programme"
+      },
+
+      "foerderart": {
+        "typ": "array",
+        "items": {
+          "enum": ["Zuschuss", "Darlehen", "Beteiligung", "Bürgschaft", "Garantie", "Sonstige"]
+        },
+        "quelle": "foerderart",
+        "vorkommen": "99%",
+        "diskriminierungskraft": "mittel",
+        "verteilung": {
+          "Zuschuss": "81%",
+          "Darlehen": "14%",
+          "andere": "5%"
+        }
+      }
+    },
+
+    "stufe_2_hoher_wert": {
+      "kmu_erforderlich": {
+        "typ": "boolean",
+        "quelle": "rechtliche_voraussetzungen",
+        "extraktionsmuster": ["KMU", "kleine und mittlere Unternehmen", "Klein- und Mittelunternehmen"],
+        "vorkommen": "21% (430 Programme)",
+        "diskriminierungskraft": "hoch",
+        "implikationen": {
+          "mitarbeiter_max": 250,
+          "umsatz_max_eur": 50000000,
+          "hinweis": "Gemäß EU-KMU-Definition"
+        }
+      },
+
+      "ausschluss_unternehmen_in_schwierigkeiten": {
+        "typ": "boolean",
+        "quelle": "rechtliche_voraussetzungen",
+        "extraktionsmuster": ["Unternehmen in Schwierigkeiten", "Ausschluss.*Schwierigkeiten"],
+        "vorkommen": "12% (247 Programme)",
+        "diskriminierungskraft": "sehr_hoch",
+        "auswirkung": "HARTE_BLOCKADE"
+      },
+
+      "gruendungsfoerdernd": {
+        "typ": "boolean",
+        "quelle": "rechtliche_voraussetzungen",
+        "extraktionsmuster": ["Existenzgründ", "Gründung", "Start-up", "startup"],
+        "vorkommen": "9% (184 Programme)",
+        "diskriminierungskraft": "hoch",
+        "kann_implizieren": {
+          "unternehmensalter_max_jahre": 5
+        }
+      },
+
+      "foerderbetrag": {
+        "typ": "object",
+        "eigenschaften": {
+          "min_eur": {"typ": ["number", "null"]},
+          "max_eur": {"typ": ["number", "null"]},
+          "waehrung": {"typ": "string", "const": "EUR"},
+          "ist_formel": {"typ": "boolean", "beschreibung": "True wenn komplexe Berechnungsformel"},
+          "formel_beschreibung": {"typ": ["string", "null"]}
+        },
+        "quelle": "volltext (primär), rechtliche_voraussetzungen (sekundär)",
+        "extraktionsmuster": [
+          "bis zu EUR X",
+          "maximal EUR X",
+          "höchstens EUR X",
+          "mindestens EUR X",
+          "ab EUR X",
+          "EUR X - EUR Y"
+        ],
+        "vorkommen": "53% erwähnen Beträge (1.087 Programme)",
+        "diskriminierungskraft": "sehr_hoch",
+        "extraktions_konfidenz_schwelle": 0.7,
+        "hinweis": "Kann einfache Beträge oder komplexe Formeln sein"
+      },
+
+      "foerdersatz_prozent": {
+        "typ": ["number", "null"],
+        "quelle": "volltext",
+        "extraktionsmuster": [
+          "X% der förderfähigen Kosten",
+          "bis zu X%",
+          "Fördersatz X%",
+          "Förderquote X%"
+        ],
+        "vorkommen": "69% erwähnen Prozentsätze (1.401 Programme)",
+        "diskriminierungskraft": "mittel",
+        "hinweis": "Zeigt Kofinanzierungserfordernis an"
+      },
+
+      "de_minimis_beihilfe": {
+        "typ": "boolean",
+        "quelle": "rechtliche_voraussetzungen ODER richtlinie",
+        "extraktionsmuster": ["De-minimis", "De minimis", "Verordnung.*1407/2013"],
+        "vorkommen": "31% (643 Programme)",
+        "diskriminierungskraft": "hoch",
+        "benutzer_auswirkung": "Begrenzt Gesamtbeihilfe auf €200k über 3 Jahre",
+        "grenzwerte": {
+          "gesamt_eur": 200000,
+          "zeitraum_jahre": 3,
+          "hinweis": "Gilt für alle öffentlichen Beihilfen zusammen"
+        }
+      },
+
+      "agvo_sektorausschluss": {
+        "typ": "boolean",
+        "quelle": "rechtliche_voraussetzungen ODER richtlinie",
+        "extraktionsmuster": ["AGVO", "Artikel 1.*Abs.*2.*5", "Verordnung.*651/2014"],
+        "vorkommen": "46% (947 Programme)",
+        "diskriminierungskraft": "sehr_hoch",
+        "ausgeschlossene_sektoren": [
+          "Landwirtschaft",
+          "Fischerei",
+          "Aquakultur",
+          "Kohle",
+          "Stahl",
+          "bestimmte Energiebereiche"
+        ],
+        "rechtsgrundlage": "Artikel 1 Abs. 2-5 AGVO (EU) Nr. 651/2014",
+        "hinweis": "Betrifft fast die Hälfte aller Programme"
+      }
+    },
+
+    "stufe_3_mittlerer_wert": {
+      "sicherheiten_erforderlich": {
+        "typ": "boolean",
+        "quelle": "rechtliche_voraussetzungen",
+        "extraktionsmuster": ["banküblich", "Sicherheiten", "Besicherung"],
+        "vorkommen": "4% (79 Programme)",
+        "diskriminierungskraft": "hoch",
+        "auswirkung": "HARTE_BLOCKADE für einige Nutzer"
+      },
+
+      "unternehmensalter_max_jahre": {
+        "typ": ["number", "null"],
+        "quelle": "rechtliche_voraussetzungen",
+        "extraktionsmuster": [
+          "nicht länger als X Jahre",
+          "maximal X Jahre seit Gründung",
+          "weniger als X Jahre",
+          "Eintragung.*nicht länger als X Jahre"
+        ],
+        "vorkommen": "2% (36 Programme)",
+        "diskriminierungskraft": "sehr_hoch wenn vorhanden",
+        "hinweis": "Nur extrahieren wenn explizit mit Zahl angegeben"
+      },
+
+      "mitarbeiter_limit_max": {
+        "typ": ["number", "null"],
+        "quelle": "rechtliche_voraussetzungen",
+        "extraktionsmuster": [
+          "nicht mehr als X Beschäftigte",
+          "maximal X Mitarbeiter",
+          "höchstens X Arbeitnehmer",
+          "bis zu X Beschäftigte"
+        ],
+        "vorkommen": "1% explizit (23 Programme), 21% implizit via KMU",
+        "diskriminierungskraft": "hoch",
+        "hinweis": "Oft impliziert durch kmu_erforderlich=true (250 Mitarbeiter)"
+      },
+
+      "umsatz_limit_max_eur": {
+        "typ": ["number", "null"],
+        "quelle": "rechtliche_voraussetzungen",
+        "extraktionsmuster": [
+          "Jahresumsatz.*höchstens EUR X",
+          "Umsatz.*maximal EUR X",
+          "Jahresumsatz von bis zu EUR X"
+        ],
+        "vorkommen": "3% explizit (61 Programme), 21% implizit via KMU",
+        "diskriminierungskraft": "hoch",
+        "hinweis": "Oft impliziert durch kmu_erforderlich=true (€50M)"
+      },
+
+      "antrag_vor_massnahmenbeginn": {
+        "typ": "boolean",
+        "quelle": "rechtliche_voraussetzungen ODER volltext",
+        "extraktionsmuster": [
+          "vor Beginn",
+          "vorzeitiger.*Maßnahmenbeginn",
+          "vor.*Vorhabenbeginn",
+          "Antrag.*vor.*Maßnahme"
+        ],
+        "vorkommen": "41% (844 Programme)",
+        "diskriminierungskraft": "niedrig (informativ, nicht filterbar)",
+        "benutzer_wert": "Kritische Timing-Information",
+        "hinweis": "Rückwirkende Förderung meist ausgeschlossen"
+      },
+
+      "investition_in_deutschland_erforderlich": {
+        "typ": "boolean",
+        "quelle": "rechtliche_voraussetzungen",
+        "extraktionsmuster": [
+          "Investition.*Deutschland",
+          "investiert.*Deutschland",
+          "Sitz in Deutschland",
+          "Betriebsstätte.*Deutschland"
+        ],
+        "vorkommen": "1.9% (38 Programme)",
+        "diskriminierungskraft": "mittel-hoch für bundesweite Programme",
+        "hinweis": "Auch bundesweite Programme können Deutschland-Investition verlangen",
+        "kontext": "Meist bei bundesweiten Investitionsfonds"
+      }
+    },
+
+    "stufe_4_temporal_neu": {
+      "richtlinie_gueltigkeit_bis": {
+        "typ": ["string", "null"],
+        "format": "date (DD.MM.YYYY)",
+        "quelle": "richtlinie",
+        "extraktionsmuster": [
+          "gültig bis (\\d{1,2}\\.\\d{1,2}\\.\\d{4})",
+          "Gültigkeit bis (\\d{1,2}\\.\\d{1,2}\\.\\d{4})",
+          "befristet bis (\\d{1,2}\\.\\d{1,2}\\.\\d{4})",
+          "gilt bis (\\d{1,2}\\.\\d{1,2}\\.\\d{4})"
+        ],
+        "vorkommen": "6% haben explizites Datum (125 Programme mit 'gültig bis')",
+        "diskriminierungskraft": "sehr_hoch",
+        "benutzer_wert": "KRITISCH - Programm kann abgelaufen sein",
+        "hinweis": "Zeigt Ende der Richtliniengültigkeit, nicht unbedingt Antragsfrist",
+        "beispiele": [
+          "befristet bis 1.12.2029",
+          "gilt bis 1.12.2025",
+          "gültig bis 31.12.2027"
+        ]
+      },
+
+      "antragsfrist": {
+        "typ": ["string", "null"],
+        "format": "date (DD.MM.YYYY) ODER 'laufend'",
+        "quelle": "volltext ODER rechtliche_voraussetzungen",
+        "extraktionsmuster": [
+          "Antragsfrist.*?(\\d{1,2}\\.\\d{1,2}\\.\\d{4})",
+          "Antragsschluss.*?(\\d{1,2}\\.\\d{1,2}\\.\\d{4})",
+          "Stichtag.*?(\\d{1,2}\\.\\d{1,2}\\.\\d{4})",
+          "laufend|fortlaufend|jederzeit|rolling"
+        ],
+        "vorkommen": {
+          "mit_frist": "12% (239 Programme)",
+          "laufend": "7% (136 Programme)",
+          "gesamt": "19%"
+        },
+        "diskriminierungskraft": "sehr_hoch",
+        "benutzer_wert": "Zeigt ob Antrag noch möglich ist",
+        "hinweis": "Unterscheidet fixe Fristen vs. laufende Anträge",
+        "werte": {
+          "laufend": "Anträge jederzeit möglich",
+          "datum": "Feste Antragsfrist"
+        }
+      },
+
+      "programm_laufzeit_bis": {
+        "typ": ["string", "null"],
+        "format": "year (YYYY) ODER date",
+        "quelle": "volltext",
+        "extraktionsmuster": [
+          "Programm.*bis (\\d{4})",
+          "Förderung.*bis (\\d{4})",
+          "verfügbar bis (\\d{4})",
+          "Mittel.*bis (\\d{4})"
+        ],
+        "vorkommen": "1% (26 Programme)",
+        "diskriminierungskraft": "mittel",
+        "hinweis": "Zeigt wann Programmmittel erschöpft sein könnten",
+        "beispiel": "Bis zu 200.000.000 EUR stehen für die Impact-Investments bis 2030 zur Verfügung"
+      }
+    }
+  },
+
+  "abgelehnte_programmspezifische_details": {
+    "beispiele": [
+      "seminar_teilnehmergebuehr_max",
+      "mindest_teilnehmerzahl",
+      "online_anwesenheit_prozent",
+      "sfdr_artikel_klassifizierung",
+      "spezifische_zertifizierungen",
+      "impact_messung_erforderlich"
+    ],
+    "regel": "Nur Muster extrahieren die in >50 Programmen vorkommen (2% Schwelle)",
+    "begruendung": "Programmspezifische Details bieten keinen Filter-Mehrwert"
+  },
+
+  "extraktions_ausgabe_schema": {
+    "typ": "object",
+    "erforderlich": ["programm_id", "extrahierte_heuristiken", "konfidenz_scores"],
+    "eigenschaften": {
+      "programm_id": {"typ": "string"},
+
+      "extrahierte_heuristiken": {
+        "typ": "object",
+        "eigenschaften": {
+          "antragsberechtigte": {"typ": "array"},
+          "foerdergebiet": {"typ": "array"},
+          "foerderart": {"typ": "array"},
+          "kmu_erforderlich": {"typ": "boolean"},
+          "ausschluss_unternehmen_in_schwierigkeiten": {"typ": "boolean"},
+          "gruendungsfoerdernd": {"typ": "boolean"},
+          "foerderbetrag_min_eur": {"typ": ["number", "null"]},
+          "foerderbetrag_max_eur": {"typ": ["number", "null"]},
+          "foerderbetrag_ist_formel": {"typ": "boolean"},
+          "foerdersatz_prozent": {"typ": ["number", "null"]},
+          "sicherheiten_erforderlich": {"typ": "boolean"},
+          "unternehmensalter_max_jahre": {"typ": ["number", "null"]},
+          "mitarbeiter_limit_max": {"typ": ["number", "null"]},
+          "umsatz_limit_max_eur": {"typ": ["number", "null"]},
+          "de_minimis_beihilfe": {"typ": "boolean"},
+          "agvo_sektorausschluss": {"typ": "boolean"},
+          "antrag_vor_massnahmenbeginn": {"typ": "boolean"},
+          "investition_in_deutschland_erforderlich": {"typ": "boolean"},
+          "richtlinie_gueltigkeit_bis": {"typ": ["string", "null"]},
+          "antragsfrist": {"typ": ["string", "null"]},
+          "programm_laufzeit_bis": {"typ": ["string", "null"]}
+        }
+      },
+
+      "konfidenz_scores": {
+        "typ": "object",
+        "beschreibung": "Konfidenz (0.0-1.0) für jedes extrahierte Feld"
+      },
+
+      "extraktions_hinweise": {
+        "typ": "string",
+        "beschreibung": "Unklarheiten, Konflikte oder wichtiger Kontext"
+      }
+    }
+  },
+
+  "statistik_zusammenfassung": {
+    "gesamt_programme": 2446,
+    "mit_rechtliche_voraussetzungen": 2018,
+    "mit_volltext": 2043,
+    "mit_richtlinie": 2052,
+
+    "top_diskriminatoren": [
+      {"feld": "foerdergebiet", "elimination": "70-80%"},
+      {"feld": "antragsberechtigte", "elimination": "40-70%"},
+      {"feld": "agvo_sektorausschluss", "vorkommen": "46%", "typ": "harte_blockade"},
+      {"feld": "de_minimis_beihilfe", "vorkommen": "31%", "typ": "gesamtgrenze"},
+      {"feld": "kmu_erforderlich", "vorkommen": "21%", "typ": "groessenlimit"},
+      {"feld": "ausschluss_unternehmen_in_schwierigkeiten", "vorkommen": "12%", "typ": "harte_blockade"}
+    ],
+
+    "neue_temporale_felder": {
+      "richtlinie_gueltigkeit_bis": "6% (125 Programme)",
+      "antragsfrist": "12% mit Datum, 7% laufend (19% gesamt)",
+      "programm_laufzeit_bis": "1% (26 Programme)"
+    }
+  }
+}

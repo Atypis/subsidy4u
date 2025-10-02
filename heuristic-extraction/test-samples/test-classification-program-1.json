@@ -1,0 +1,205 @@
+{
+  "program_id": "f956ffd7-a81c-4ce8-bb67-412937b71bf6",
+  "title": "Inklusion in der Erwachsenenbildung (Inklusionsrichtlinie)",
+  "url": "https://www.foerderdatenbank.de/FDB/Content/DE/Foerderprogramm/Land/Thueringen/inklusion-erwachsenenbildung.html",
+
+  "extraction_metadata": {
+    "extraction_date": "2025-10-01",
+    "sources_analyzed": ["kurztext", "volltext", "rechtliche_voraussetzungen", "richtlinie"],
+    "ontology_version": "3.0 (14 filters, S+A tiers)"
+  },
+
+  "14_filter_classification": {
+
+    "1_foerdergebiet": {
+      "value": ["Thüringen"],
+      "source": "foerdergebiet field",
+      "confidence": 1.0,
+      "filter_logic": "User from Thüringen: ✅ KEEP | User from other Bundesland: ❌ FILTER OUT",
+      "null_handling": "null = ✅ KEEP (permissive)"
+    },
+
+    "2_foerderart": {
+      "value": ["Zuschuss"],
+      "source": "foerderart field + volltext",
+      "quote": "Sie bekommen die Förderung als Zuschuss.",
+      "confidence": 1.0,
+      "filter_logic": "User wants Zuschuss: ✅ KEEP | User wants only Darlehen: ❌ FILTER OUT",
+      "null_handling": "null = ✅ KEEP (permissive)"
+    },
+
+    "3_richtlinie_gueltigkeit_bis": {
+      "value": "2022-12-31",
+      "source": "richtlinie",
+      "quote": "Die Richtlinie ist bis zum 31. Dezember 2022 befristet.",
+      "confidence": 1.0,
+      "filter_logic": "Today (2025-10-01) > 2022-12-31: ❌ FILTER OUT (EXPIRED!)",
+      "status": "⚠️ CRITICAL: Program is EXPIRED since 2022",
+      "null_handling": "null = ✅ KEEP (assume valid)"
+    },
+
+    "4_ausschluss_unternehmen_in_schwierigkeiten": {
+      "value": null,
+      "source": "all sources checked",
+      "notes": "No mention of exclusion for companies in difficulty",
+      "confidence": 1.0,
+      "filter_logic": "null = ✅ KEEP (no exclusion)",
+      "null_handling": "null = ✅ KEEP (permissive)"
+    },
+
+    "5_agvo_sektorausschluss": {
+      "value": null,
+      "source": "all sources checked",
+      "notes": "No mention of AGVO sector exclusions",
+      "confidence": 1.0,
+      "filter_logic": "null = ✅ KEEP (no sector restrictions)",
+      "null_handling": "null = ✅ KEEP (permissive)"
+    },
+
+    "6_sicherheiten_erforderlich": {
+      "value": false,
+      "source": "all sources checked",
+      "notes": "Zuschuss program, no collateral mentioned",
+      "confidence": 1.0,
+      "filter_logic": "false = ✅ KEEP for all users",
+      "null_handling": "null = ✅ KEEP (assume no collateral needed)"
+    },
+
+    "7_foerderbetrag_max_eur": {
+      "value": 250000,
+      "source": "volltext + richtlinie",
+      "quote_volltext": "Ihre Investitionen in die Herstellung der Barrierefreiheit dürfen bis zu EUR 250.000 betragen.",
+      "quote_richtlinie": "Bei den unter Ziffer 2 b) aufgeführten Fördergegenständen darf die Zuwendung den Betrag von 250.000 Euro nicht übersteigen.",
+      "additional_info": {
+        "min_eur": 5000,
+        "quote": "Die Bagatellgrenze liegt bei EUR 5.000."
+      },
+      "confidence": 1.0,
+      "filter_logic": "User needs ≤€250k: ✅ KEEP | User needs >€250k: ❌ FILTER OUT",
+      "null_handling": "null = ✅ KEEP (unknown limit)"
+    },
+
+    "8_de_minimis_beihilfe": {
+      "value": null,
+      "source": "all sources checked",
+      "notes": "No mention of De-minimis regulation",
+      "confidence": 0.9,
+      "filter_logic": "null = ✅ KEEP (likely not De-minimis, regular state aid)",
+      "null_handling": "null = ✅ KEEP (informational only)"
+    },
+
+    "9_antragsberechtigte": {
+      "value": ["Bildungseinrichtung", "Verband/Vereinigung"],
+      "source_field": ["Bildungseinrichtung", "Verband/Vereinigung"],
+      "source_text": "rechtliche_voraussetzungen",
+      "quote": "Antragsberechtigt sind Träger der anerkannten Erwachsenenbildungseinrichtungen und deren Landesorganisationen wie die Landesorganisation der freien Träger in der Erwachsenenbildung Thüringen e.V. (LOFT) und der Thüringer Volkshochschulverband e.V. (TVV).",
+      "detailed_entities": [
+        "Träger der anerkannten Erwachsenenbildungseinrichtungen",
+        "Landesorganisationen (LOFT, TVV)"
+      ],
+      "confidence": 1.0,
+      "ontology_note": "Field matches text extraction - accurate!",
+      "filter_logic": "User is Bildungseinrichtung or Verband: ✅ KEEP | User is Unternehmen: ❌ FILTER OUT",
+      "null_handling": "null = ✅ KEEP (assume all eligible)"
+    },
+
+    "10_kmu_erforderlich": {
+      "value": null,
+      "source": "all sources checked",
+      "notes": "Not applicable - target is educational institutions, not companies. No KMU requirement mentioned.",
+      "confidence": 1.0,
+      "filter_logic": "null = ✅ KEEP (no KMU requirement)",
+      "null_handling": "null = ✅ KEEP (permissive)"
+    },
+
+    "11_antragsfrist": {
+      "value": "annual_recurring",
+      "deadline_pattern": "31.10. des laufenden Jahres für das folgende Jahr",
+      "source": "volltext + richtlinie",
+      "quote_volltext": "Stellen Sie Ihren Antrag bitte bis zum 31.10. des laufenden Jahres für das folgende Jahr",
+      "quote_richtlinie": "Antragsfrist für Maßnahmen im folgenden Haushaltsjahr ist der 31. Oktober des laufenden Jahres.",
+      "antragsfrist_typ": "jaehrlich",
+      "next_deadline": "2025-10-31",
+      "confidence": 1.0,
+      "filter_logic": "Today < 2025-10-31: ✅ KEEP | After 2025-10-31: ❌ FILTER OUT (until next year)",
+      "special_note": "BUT PROGRAM IS EXPIRED (see filter #3)!",
+      "null_handling": "null = ✅ KEEP (assume rolling)"
+    },
+
+    "12_mitarbeiter_limit_max": {
+      "value": null,
+      "source": "all sources checked",
+      "notes": "No employee limit mentioned. Program targets educational institutions.",
+      "confidence": 1.0,
+      "filter_logic": "null = ✅ KEEP (no limit)",
+      "null_handling": "null = ✅ KEEP (permissive)"
+    },
+
+    "13_umsatz_limit_max_eur": {
+      "value": null,
+      "source": "all sources checked",
+      "notes": "No revenue limit mentioned",
+      "confidence": 1.0,
+      "filter_logic": "null = ✅ KEEP (no limit)",
+      "null_handling": "null = ✅ KEEP (permissive)"
+    },
+
+    "14_unternehmensalter_max_jahre": {
+      "value": null,
+      "source": "all sources checked",
+      "notes": "No age restriction mentioned",
+      "confidence": 1.0,
+      "filter_logic": "null = ✅ KEEP (no limit)",
+      "null_handling": "null = ✅ KEEP (permissive)"
+    }
+  },
+
+  "additional_extracted_info": {
+    "foerdersatz_prozent": {
+      "value": 90,
+      "source": "volltext",
+      "quote": "Die Höhe des Zuschusses beträgt bis zu 90 Prozent Ihrer zuwendungsfähigen Ausgaben.",
+      "eigenanteil": 10
+    },
+    "foerderbetrag_min_eur": {
+      "value": 5000,
+      "source": "volltext",
+      "quote": "Die Bagatellgrenze liegt bei EUR 5.000."
+    },
+    "specific_focus": "Barrierefreiheit in Erwachsenenbildung",
+    "target_beneficiaries": "Menschen mit Behinderungen",
+    "eligible_expenses": [
+      "Konzeptentwicklung für inklusive Maßnahmen",
+      "Barrierefreiheit bei Gebäuden (Aufzug, Rampen, Behindertentoiletten)",
+      "Mobile Hilfsmittel (Lesegeräte, Hörschleifen)",
+      "Barrierefreie Informationsvermittlung"
+    ],
+    "bewilligungsbehoerde": "Thüringer Ministerium für Bildung, Jugend und Sport (TMBJS)",
+    "beratungsgremium": true,
+    "din_requirements": "DIN 18040-1 (Barrierefreiheit)",
+    "zweckbindungsfrist_jahre": 10
+  },
+
+  "final_filter_result": {
+    "should_display": false,
+    "reason": "❌ EXPIRED (richtlinie_gueltigkeit_bis: 31.12.2022)",
+    "filters_passed": 13,
+    "filters_failed": 1,
+    "failed_filters": ["richtlinie_gueltigkeit_bis"],
+    "critical_finding": "Program expired December 31, 2022 - should be removed from database or marked as inactive"
+  },
+
+  "data_quality_assessment": {
+    "foerderberechtigte_field_accuracy": "✅ ACCURATE - Field matches text extraction perfectly",
+    "completeness": "Excellent - all relevant info found in volltext + richtlinie",
+    "extraction_challenges": [
+      "Long richtlinie text (>9000 chars) requires careful reading",
+      "Annual recurring deadline pattern requires special handling"
+    ],
+    "recommendations": [
+      "Mark program as EXPIRED in database",
+      "Add expiry_status field to subsidy_programs table",
+      "Check all other Thüringen programs for similar expiry dates"
+    ]
+  }
+}

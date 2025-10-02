@@ -1,0 +1,199 @@
+{
+  "program_id": "a40ab725-c2a5-4808-a565-91755773603b",
+  "title": "Förderung im Rahmen des IMPULS-Programms zur Qualifizierung",
+  "url": "https://www.foerderdatenbank.de/FDB/Content/DE/Foerderprogramm/Land/Hamburg/impuls-programm-zur-qualifizierung.html",
+
+  "extraction_metadata": {
+    "sources_used": ["kurztext", "volltext", "rechtliche_voraussetzungen", "richtlinie"],
+    "extraction_date": "2025-10-01",
+    "total_chars": 9500
+  },
+
+  "canonical_ontology_mapping": {
+    "tier_1_universal": {
+      "entity_type": {
+        "value": ["education_institution", "association"],
+        "source": "foerderberechtigte + rechtliche_voraussetzungen",
+        "original": ["Bildungseinrichtung", "Verband/Vereinigung"],
+        "confidence": 1.0,
+        "ontology_match": "✅ PERFECT - Maps to canonical entity types"
+      },
+
+      "region": {
+        "value": ["Hamburg"],
+        "source": "foerdergebiet",
+        "confidence": 1.0,
+        "ontology_match": "✅ PERFECT - Standard region field"
+      },
+
+      "funding_type": {
+        "value": ["Zuschuss"],
+        "source": "foerderart",
+        "confidence": 1.0,
+        "ontology_match": "✅ PERFECT - Standard funding type"
+      }
+    },
+
+    "tier_2_high_value": {
+      "sme_required": {
+        "value": false,
+        "source": "rechtliche_voraussetzungen + richtlinie",
+        "confidence": 1.0,
+        "ontology_match": "✅ PERFECT - No KMU requirement mentioned"
+      },
+
+      "excludes_companies_in_difficulty": {
+        "value": true,
+        "source": "rechtliche_voraussetzungen + richtlinie",
+        "quote": "Nicht gefördert werden Unternehmen in Schwierigkeiten im Sinne von Artikel 2 Nr. 18 Verordnung (EU) Nr. 651/2014",
+        "confidence": 1.0,
+        "ontology_match": "✅ PERFECT - Standard exclusion pattern"
+      },
+
+      "startup_friendly": {
+        "value": false,
+        "source": "all sources",
+        "confidence": 1.0,
+        "notes": "No mention of Existenzgründung or Gründung",
+        "ontology_match": "✅ PERFECT - Boolean correctly extracted"
+      },
+
+      "funding_amount": {
+        "value": {
+          "structure": "complex_formula",
+          "base_amount_ranges": {
+            "veranstaltung_6_8h": {"base": 1000, "per_participant": 25, "max_participants": 200},
+            "veranstaltung_3_4h": {"base": 600, "per_participant": 25, "max_participants": 200},
+            "seminar_6_8h_day1": {"base": 1000, "per_participant": 50, "max_participants": 30},
+            "seminar_6_8h_day2plus": {"base": 1000, "per_participant": 40, "max_participants": 30},
+            "seminar_3_4h_day1": {"base": 600, "per_participant": 50, "max_participants": 30},
+            "online_seminar": {"base": 500, "per_participant": 20, "max_participants": 100}
+          },
+          "simplified_estimate": {
+            "min_eur": 500,
+            "max_eur": 11000,
+            "calculation_note": "Min=€500 (online base), Max=€1000+(200×€50)=€11k (seminar day 1 max)"
+          }
+        },
+        "source": "volltext + richtlinie (section 4)",
+        "confidence": 0.95,
+        "ontology_match": "⚠️ COMPLEX - Standard schema expects simple min/max, but this has conditional formulas"
+      },
+
+      "funding_rate_percent": {
+        "value": null,
+        "source": "all sources",
+        "notes": "Fixed amounts (Festbetragsfinanzierung), not percentage-based",
+        "confidence": 1.0,
+        "ontology_match": "✅ PERFECT - Correctly null when not applicable"
+      }
+    },
+
+    "tier_3_medium_value": {
+      "collateral_required": {
+        "value": false,
+        "source": "all sources",
+        "confidence": 1.0,
+        "ontology_match": "✅ PERFECT - No collateral mentioned"
+      },
+
+      "company_age_max_years": {
+        "value": null,
+        "source": "all sources",
+        "confidence": 1.0,
+        "ontology_match": "✅ PERFECT - No age limit mentioned"
+      },
+
+      "employee_limit_max": {
+        "value": null,
+        "source": "all sources",
+        "confidence": 1.0,
+        "ontology_match": "✅ PERFECT - No employee limit mentioned"
+      },
+
+      "revenue_limit_max_eur": {
+        "value": null,
+        "source": "all sources",
+        "confidence": 1.0,
+        "ontology_match": "✅ PERFECT - No revenue limit mentioned"
+      }
+    }
+  },
+
+  "NEW_ONTOLOGY_CANDIDATES": {
+    "de_minimis_beihilfe": {
+      "value": true,
+      "source": "richtlinie (section 6)",
+      "quote": "Die Gewährung der Fördermittel erfolgt unter den Voraussetzungen der De-minimis-Verordnung (EU) Nr. 1407/2013",
+      "occurrence_estimate": "HIGH - Many EU-funded programs use this",
+      "discriminatory_power": "MEDIUM",
+      "user_value": "Limits total public aid to €200k over 3 years",
+      "recommendation": "⭐⭐⭐ ADD TO ONTOLOGY - Important constraint for businesses receiving multiple subsidies"
+    },
+
+    "excluded_sectors_eu_agvo": {
+      "value": ["agriculture", "fisheries", "aquaculture", "coal", "steel"],
+      "source": "richtlinie (section 2)",
+      "quote": "Von der Förderung ausgeschlossen sind Unternehmen bzw. Sektoren in den Fällen des Artikel 1 Abs. 2 bis 5 AGVO",
+      "occurrence_estimate": "HIGH - Standard EU exclusions appear in many programs",
+      "discriminatory_power": "MEDIUM-HIGH",
+      "user_value": "Hard blocker for specific industries",
+      "recommendation": "⭐⭐⭐⭐ ADD TO ONTOLOGY - Common exclusion pattern across EU programs"
+    },
+
+    "application_timing_vorzeitiger_massnahmenbeginn": {
+      "value": "application_before_start_required",
+      "source": "volltext + richtlinie (section 5)",
+      "quote": "Ihren Antrag richten Sie bitte vor Beginn Ihrer Maßnahme... Als Beginn der Maßnahme gilt bereits der Abschluss eines Lieferungs- oder Leistungsvertrages",
+      "occurrence_estimate": "VERY HIGH - Most grant programs have this rule",
+      "discriminatory_power": "LOW (informational, not filterable)",
+      "user_value": "Critical timing information but not a filter criterion",
+      "recommendation": "⭐⭐ MAYBE - More of a process requirement than eligibility filter"
+    },
+
+    "participant_fee_cap": {
+      "value": {"max_short": 100, "max_long": 150, "currency": "EUR"},
+      "source": "rechtliche_voraussetzungen + richtlinie (section 2.1)",
+      "occurrence_estimate": "VERY LOW - Specific to education/seminar programs only",
+      "discriminatory_power": "NONE",
+      "recommendation": "❌ REJECT - Program-specific noise, not reusable"
+    },
+
+    "minimum_quality_rating": {
+      "value": {"threshold_percent": 75, "consecutive_events": 2},
+      "source": "rechtliche_voraussetzungen + richtlinie (section 2.3)",
+      "occurrence_estimate": "LOW - Specific to event-based programs",
+      "discriminatory_power": "NONE",
+      "recommendation": "❌ REJECT - Too specific"
+    }
+  },
+
+  "extracted_heuristics_final": {
+    "entity_type": ["education_institution", "association"],
+    "region": ["Hamburg"],
+    "funding_type": ["Zuschuss"],
+    "sme_required": false,
+    "excludes_companies_in_difficulty": true,
+    "startup_friendly": false,
+    "funding_amount_min_eur": 500,
+    "funding_amount_max_eur": 11000,
+    "funding_rate_percent": null,
+    "collateral_required": false,
+    "company_age_max_years": null,
+    "employee_limit_max": null,
+    "revenue_limit_max_eur": null,
+    "de_minimis_aid": true,
+    "excluded_sectors": ["agriculture", "fisheries", "aquaculture", "coal", "steel"],
+    "application_before_start_required": true
+  },
+
+  "confidence_scores": {
+    "entity_type": 1.0,
+    "region": 1.0,
+    "funding_type": 1.0,
+    "excludes_companies_in_difficulty": 1.0,
+    "funding_amount": 0.95,
+    "de_minimis_aid": 1.0,
+    "excluded_sectors": 0.9
+  }
+}
