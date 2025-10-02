@@ -32,9 +32,10 @@ if (!OPENAI_API_KEY || !SUPABASE_URL || !SUPABASE_KEY) {
 const openai = new OpenAI({ apiKey: OPENAI_API_KEY })
 const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_KEY)
 
-// Test mode: only process 10 programs
+// Batch size configuration
 const TEST_MODE = process.argv.includes('--test')
-const BATCH_SIZE = TEST_MODE ? 10 : undefined // undefined = all unprocessed
+const batchArg = process.argv.find(arg => arg.startsWith('--batch='))
+const BATCH_SIZE = TEST_MODE ? 10 : batchArg ? parseInt(batchArg.split('=')[1]) : undefined // undefined = all unprocessed
 
 const MODEL = 'gpt-5'
 const REASONING_EFFORT = 'high' as const
@@ -268,7 +269,7 @@ async function saveToSupabase(extraction: ExtractedHeuristics & { programId: str
 async function runExtraction() {
   console.log('🚀 Starting Heuristic Extraction (Ontology v4.1)\n')
   console.log(`Model: ${MODEL} (${REASONING_EFFORT})`)
-  console.log(`Mode: ${TEST_MODE ? 'TEST (10 programs)' : 'PRODUCTION (all unprocessed)'}\n`)
+  console.log(`Mode: ${TEST_MODE ? 'TEST (10 programs)' : BATCH_SIZE ? `BATCH (${BATCH_SIZE} programs)` : 'PRODUCTION (all unprocessed)'}\n`)
 
   // Fetch unprocessed programs
   const programs = await fetchUnprocessedPrograms(BATCH_SIZE)
