@@ -1,0 +1,719 @@
+{
+  "test_date": "2025-10-02T13:57:22.479Z",
+  "models_tested": [
+    {
+      "name": "gpt-5-mini",
+      "reasoning": "medium"
+    },
+    {
+      "name": "gpt-5",
+      "reasoning": "high"
+    }
+  ],
+  "sample_size": 10,
+  "total_cost": {
+    "model1": 0.0335037,
+    "model2": 0.46298375
+  },
+  "results": [
+    {
+      "program": {
+        "id": "baf75338-a366-454b-b826-20833c23078e",
+        "title": "Beteiligungsgarantien der Bürgschaftsbank Sachsen",
+        "region": [
+          "Sachsen"
+        ],
+        "entity_type": [
+          "Existenzgründer/in",
+          "Unternehmen"
+        ]
+      },
+      "model1": {
+        "name": "gpt-5-mini",
+        "result": {
+          "richtlinie_gueltigkeit_bis": null,
+          "ausschluss_unternehmen_in_schwierigkeiten": true,
+          "agvo_sektorausschluss": null,
+          "foerderbetrag_max_eur": 2500000,
+          "foerderbetrag_min_eur": null,
+          "de_minimis_beihilfe": null,
+          "antragsfrist": null,
+          "kmu_erforderlich": true,
+          "mitarbeiter_limit_max": null,
+          "umsatz_limit_max_eur": null,
+          "unternehmensalter_max_jahre": null,
+          "extraction_confidence": 0.8,
+          "extraction_notes": "Rationale: Die Richtlinie nennt explizit eine übliche Obergrenze der Beteiligung von 1.250.000 EUR und in begründeten Ausnahmefällen bis zu 2.500.000 EUR — daher wurde als maximal explizit genannter Betrag 2.500.000 EUR extrahiert. Explizit ausgeschlossen sind 'Unternehmen in Schwierigkeiten' (Sanierung der Finanzverhältnisse), daher Ausschluss = true. Antragsberechtigt sind ausdrücklich KMU mit Sitz/Betriebsstätte in Sachsen, daher kmu_erforderlich = true. Keine Erwähnung von AGVO/De-minimis, keine Antragsfrist oder konkrete Mitarbeiter-/Umsatz-/Unternehmensaltersgrenzen im Text — diese Felder sind null. Zusätzliche relevante Informationen: Die Garantie darf 75% der Beteiligungssumme nicht übersteigen; Beteiligungen sollen in Form der typisch stillen Gesellschaft erfolgen (Ausnahme: Direktbeteiligung möglich); Anträge sind über private Kapitalbeteiligungsgesellschaften zu stellen; Richtlinie datiert (gültig ab 2018) aber kein 'gültig bis' genannt. Confidence 0.8, da die extrahierten Werte (insbesondere Max-Betrag, KMU-Pflicht, Ausschluss bei Schwierigkeiten) klar im Text stehen, andere Felder fehlen eindeutig."
+        },
+        "tokens": {
+          "input": 4020,
+          "output": 1265
+        },
+        "latency": 21304,
+        "cost": 0.002724
+      },
+      "model2": {
+        "name": "gpt-5",
+        "result": {
+          "richtlinie_gueltigkeit_bis": null,
+          "ausschluss_unternehmen_in_schwierigkeiten": true,
+          "agvo_sektorausschluss": null,
+          "foerderbetrag_max_eur": 2500000,
+          "foerderbetrag_min_eur": null,
+          "de_minimis_beihilfe": null,
+          "antragsfrist": null,
+          "kmu_erforderlich": true,
+          "mitarbeiter_limit_max": null,
+          "umsatz_limit_max_eur": null,
+          "unternehmensalter_max_jahre": null,
+          "extraction_confidence": 0.8,
+          "extraction_notes": "Richtlinie nennt nur 'gültig ab 01.01.2018', kein 'gültig bis' gefunden. Expliziter Ausschluss von Unternehmen in Schwierigkeiten (Sanierung) vorhanden. Keine Nennung von AGVO-/Sektorausschlüssen oder De-minimis. Der extrahierte Maximalbetrag (2.500.000 EUR) bezieht sich auf die Beteiligung; die Garantie ist auf 75% der Beteiligung begrenzt, jedoch ohne absoluten Garantiebetrag, daher keine Umrechnung. Keine Antragsfrist angegeben. KMU-Pflicht explizit; keine expliziten Mitarbeiter-, Umsatz- oder Altersgrenzen."
+        },
+        "tokens": {
+          "input": 4020,
+          "output": 3109
+        },
+        "latency": 82664,
+        "cost": 0.036115
+      },
+      "comparison": {
+        "identical": 12,
+        "different": 0,
+        "differences": []
+      }
+    },
+    {
+      "program": {
+        "id": "bbcaca5a-5923-4643-92a0-2cabaf197cf7",
+        "title": "Garantien von Beteiligungen an kleinen und mittleren Unternehmen der gewerblichen Wirtschaft",
+        "region": [
+          "Nordrhein-Westfalen"
+        ],
+        "entity_type": [
+          "Existenzgründer/in",
+          "Unternehmen"
+        ]
+      },
+      "model1": {
+        "name": "gpt-5-mini",
+        "result": {
+          "richtlinie_gueltigkeit_bis": null,
+          "ausschluss_unternehmen_in_schwierigkeiten": null,
+          "agvo_sektorausschluss": null,
+          "foerderbetrag_max_eur": 1022583.76,
+          "foerderbetrag_min_eur": 51129.19,
+          "de_minimis_beihilfe": null,
+          "antragsfrist": null,
+          "kmu_erforderlich": true,
+          "mitarbeiter_limit_max": 250,
+          "umsatz_limit_max_eur": 40000000,
+          "unternehmensalter_max_jahre": 5,
+          "extraction_confidence": 0.8,
+          "extraction_notes": "Quellenpriorität: Informationen aus der Richtlinie wurden bevorzugt. Die Richtlinie nennt Beteiligungsgrenzen in DM (4.2: min 100.000 DM, i.d.R. höchstens 2 Mio. DM) — diese Werte wurden gemäß Quellenpriorität in Euro umgerechnet (1 EUR = 1,95583 DM) und als foerderbetrag_min_eur / foerderbetrag_max_eur angegeben. Im Volltext stehen abweichende, explizit in EUR genannte Werte (Beteiligung mindestens EUR 50.000; soll in der Regel EUR 1.000.000 nicht übersteigen). Umsatzgrenze der KMU wird in der Richtlinie als 'nicht mehr als 40 Mio. ECU' angegeben; hier als 40.000.000 EUR übernommen (ECU/EUR-Parität angenommen). Die Richtlinie definiert KMU explizit (weniger als 250 Beschäftigte, Umsatz ≤ 40 Mio. ECU), daher kmu_erforderlich = true und mitarbeiter_limit_max = 250. Es gibt keine explizite Frist/'gültig bis' oder De-minimis-Hinweise im Text. Hinweise zu Unternehmen in Schwierigkeiten: nicht generell ausgeschlossen — Sonderregelungen/Notifizierungspflichten und Einschränkungen (u.a. Ausschluss der Umschuldung, besondere Notifizierung bei bestimmten Fällen) sind vorhanden; daher kein klarer Ausschluss-Eintrag (null). AGVO/Verweise auf moderne AGVO-Regelungen nicht explizit genannt (Richtlinie verweist allgemein auf EU-Leitlinien und KMU-Gemeinschaftsrahmen). Confidence 0.8 wegen Währungsumrechnung (DM→EUR), Verwendung von ECU im Originaltext und weil Volltext und Richtlinie unterschiedliche Betragsangaben enthalten."
+        },
+        "tokens": {
+          "input": 4039,
+          "output": 2907
+        },
+        "latency": 47563,
+        "cost": 0.0047001
+      },
+      "model2": {
+        "name": "gpt-5",
+        "result": {
+          "richtlinie_gueltigkeit_bis": null,
+          "ausschluss_unternehmen_in_schwierigkeiten": false,
+          "agvo_sektorausschluss": null,
+          "foerderbetrag_max_eur": 1000000,
+          "foerderbetrag_min_eur": 50000,
+          "de_minimis_beihilfe": null,
+          "antragsfrist": null,
+          "kmu_erforderlich": true,
+          "mitarbeiter_limit_max": 250,
+          "umsatz_limit_max_eur": null,
+          "unternehmensalter_max_jahre": null,
+          "extraction_confidence": 0.75,
+          "extraction_notes": "Keine Gültigkeitsfrist in der Richtlinie gefunden (RdErl. v. 01.11.1998). KMU ist Voraussetzung; KMU-Definition enthält \"weniger als 250 Arbeitskräfte\" (wir geben 250 als Obergrenze an; tatsächlich <250). Umsatz-/Bilanzgrenzen in der Richtlinie nur in ECU genannt (40 Mio. ECU Umsatz bzw. 27 Mio. ECU Bilanzsumme) – nicht in EUR übernommen. Mindest-/Höchstbetrag stammen aus dem Volltext (EUR 50.000 bis in der Regel 1.000.000) und beziehen sich auf die Beteiligung, nicht direkt auf die Garantie; Richtlinie gibt entsprechende DM-Werte (100.000–2.000.000 DM). Unternehmen in Schwierigkeiten sind nicht generell ausgeschlossen; unter 3.5.4 mit Auflagen/Notifizierung zulässig. Keine AGVO- oder De-minimis-Verweise. Keine Antragsfrist genannt."
+        },
+        "tokens": {
+          "input": 4039,
+          "output": 6118
+        },
+        "latency": 181716,
+        "cost": 0.06622875
+      },
+      "comparison": {
+        "identical": 6,
+        "different": 6,
+        "differences": [
+          "  • ausschluss_unternehmen_in_schwierigkeiten: [gpt-5-mini] null vs [gpt-5] false",
+          "  • foerderbetrag_max_eur: [gpt-5-mini] 1022583.76 vs [gpt-5] 1000000",
+          "  • foerderbetrag_min_eur: [gpt-5-mini] 51129.19 vs [gpt-5] 50000",
+          "  • umsatz_limit_max_eur: [gpt-5-mini] 40000000 vs [gpt-5] null",
+          "  • unternehmensalter_max_jahre: [gpt-5-mini] 5 vs [gpt-5] null",
+          "  • extraction_confidence: [gpt-5-mini] 0.8 vs [gpt-5] 0.75"
+        ]
+      }
+    },
+    {
+      "program": {
+        "id": "4963f1d3-b940-4a9d-b0e3-528baee5d67e",
+        "title": "Förderrichtlinie Ausgleichszulage (RL AZL/2015)",
+        "region": [
+          "Sachsen"
+        ],
+        "entity_type": [
+          "Unternehmen"
+        ]
+      },
+      "model1": {
+        "name": "gpt-5-mini",
+        "result": {
+          "richtlinie_gueltigkeit_bis": null,
+          "ausschluss_unternehmen_in_schwierigkeiten": null,
+          "agvo_sektorausschluss": null,
+          "foerderbetrag_max_eur": null,
+          "foerderbetrag_min_eur": null,
+          "de_minimis_beihilfe": null,
+          "antragsfrist": null,
+          "kmu_erforderlich": false,
+          "mitarbeiter_limit_max": null,
+          "umsatz_limit_max_eur": null,
+          "unternehmensalter_max_jahre": null,
+          "extraction_confidence": 0.8,
+          "extraction_notes": "Eligibilität: natürliche Personen, Personengesellschaften und juristische Personen mit Betriebssitz in Sachsen; Begünstigter muss aktiver Landwirt sein. Explizit genannte Mindestflächen: mind. 3,0000 ha förderfähige Fläche in benachteiligten Gebieten (Antragsjahr); Mindestschlaggröße 0,3000 ha. Zahlungsstruktur: pauschale Zahlungen pro Hektar; Staffelung und degressive Zahlung (volle Höhe für bis zu 85 ha, darüber Kürzung um durchschnittlich 5 %). Explizit genannte Förderbeträge pro ha: 105 EUR (Zone 1), 75 EUR (Zone 2), 50 EUR (Zone 3), 35 EUR (spezifische Gebiete) sowie Übergangszahlungen 25 EUR/ha für Phasing-Out-Gebiete — diese sind pro-hektar-Angaben; kein expliziter 'bis zu EUR X' Gesamtbetrag angegeben, daher foerderbetrag_max_eur/-min_eur = null (laut Regel: keine Berechnungen/Abschätzungen). Antrag: Text nennt \"Ihren Antrag stellen Sie bis zum 15.5.\", jedoch ohne Jahr — kein ISO-Datum extrahierbar → antragsfrist = null; außerdem heißt es, die Antragstellung erfolgt jährlich und Mehrfachanträge je Jahr sind ausgeschlossen. Rechtliche Verweise: InVeKoS (Verordnung (EU) Nr. 1306/2013), Verordnung (EU) Nr. 1305/2013, Nr.1307/2013, Nr.809/2014, Nr.808/2014; keine Erwähnung von AGVO/Verordnung 651/2014, keiner De-minimis-Regelung (Verordnung 1407/2013) und kein Ausschluss von 'Unternehmen in Schwierigkeiten' im Text. KMU-Einschränkung: nicht vorhanden (auch juristische Personen ohne KMU-Einschränkung genannt) → kmu_erforderlich=false. Viele spezifische Filter (Mitarbeiterzahl, Umsatzgrenzen, Altersgrenzen) werden nicht genannt → entsprechende Felder = null. Confidence: 0.8, da die Mehrheit der relevanten Informationen klar ist (Zielgruppe, Flächenvoraussetzungen, per-ha-Sätze), aber wichtige filterrelevante Angaben (konkrete Antragsfrist mit Jahr, absolute Höchst-/Mindestbeträge, De-minimis-/AGVO-Hinweise) fehlen oder sind nur pro Hektar angegeben."
+        },
+        "tokens": {
+          "input": 4441,
+          "output": 1903
+        },
+        "latency": 32191,
+        "cost": 0.0036158999999999996
+      },
+      "model2": {
+        "name": "gpt-5",
+        "result": {
+          "richtlinie_gueltigkeit_bis": null,
+          "ausschluss_unternehmen_in_schwierigkeiten": null,
+          "agvo_sektorausschluss": null,
+          "foerderbetrag_max_eur": null,
+          "foerderbetrag_min_eur": null,
+          "de_minimis_beihilfe": null,
+          "antragsfrist": null,
+          "kmu_erforderlich": null,
+          "mitarbeiter_limit_max": null,
+          "umsatz_limit_max_eur": null,
+          "unternehmensalter_max_jahre": null,
+          "extraction_confidence": 0.7,
+          "extraction_notes": "Keine ausdrückliche Geltungs-/Ablauffrist der Richtlinie gefunden (nur: vom 22.06.2015, zuletzt geändert am 19.03.2020). Keine Erwähnung von 'Unternehmen in Schwierigkeiten' oder AGVO/VO (EU) 651/2014; Grundlage sind ELER/EPLR (VO (EU) 1305/2013, 1306/2013). Förderbeträge werden als Pauschalen pro Hektar ausgewiesen (bis 85 ha volle Prämie, darüber ~5% degressiv): 105/75/50/35 EUR/ha je nach Zone; Phasing-Out: 25 EUR/ha. Kein absoluter Maximal- oder Mindestzuschuss pro Unternehmen genannt, daher foerderbetrag_* = null. Antragsfrist im Volltext 'bis zum 15.5.' (jährlich), ohne Jahr; daher antragsfrist = null. Keine Anforderungen zu KMU, Mitarbeiterzahl, Umsatz oder Unternehmensalter genannt. Weitere fachliche Bedingungen: mind. 3 ha förderfähige Fläche in benachteiligten Gebieten und Mindestschlaggröße 0,3 ha (nur Kontext)."
+        },
+        "tokens": {
+          "input": 4441,
+          "output": 4307
+        },
+        "latency": 115612,
+        "cost": 0.04862125
+      },
+      "comparison": {
+        "identical": 10,
+        "different": 2,
+        "differences": [
+          "  • kmu_erforderlich: [gpt-5-mini] false vs [gpt-5] null",
+          "  • extraction_confidence: [gpt-5-mini] 0.8 vs [gpt-5] 0.7"
+        ]
+      }
+    },
+    {
+      "program": {
+        "id": "62bfbef3-e319-40d2-895f-27ba838c0756",
+        "title": "Rettung und Umstrukturierung von kleinen und mittleren Unternehmen",
+        "region": [
+          "Sachsen"
+        ],
+        "entity_type": [
+          "Unternehmen"
+        ]
+      },
+      "model1": {
+        "name": "gpt-5-mini",
+        "result": {
+          "richtlinie_gueltigkeit_bis": null,
+          "ausschluss_unternehmen_in_schwierigkeiten": false,
+          "agvo_sektorausschluss": null,
+          "foerderbetrag_max_eur": 2000000,
+          "foerderbetrag_min_eur": null,
+          "de_minimis_beihilfe": true,
+          "antragsfrist": null,
+          "kmu_erforderlich": false,
+          "mitarbeiter_limit_max": null,
+          "umsatz_limit_max_eur": null,
+          "unternehmensalter_max_jahre": null,
+          "extraction_confidence": 0.8,
+          "extraction_notes": "Förderung richtet sich primär an Unternehmen in wirtschaftlichen Schwierigkeiten (nicht ausgeschlossen). Höchstbetrag Darlehen explizit: EUR 2.000.000. De-minimis-Verordnung wird mehrfach genannt und ist für bestimmte Beihilfen verbindlich (dementsprechend als De-minimis relevant markiert). Zuschuss für Insolvenzplan: bis zu 50% der zuwendungsfähigen Kosten, max. EUR 10.000 (im Volltext genannt). Richtlinie nennt explizite sektorale Ausschlüsse: Steinkohlenbergbau, Stahlindustrie und Finanzinstitute (kein genereller Verweis auf AGVO/Verordnung 651/2014 gefunden) — deshalb agvo_sektorausschluss = null. KMU sind primäre Empfänger gemäß EU-KMU-Definition, jedoch können in begründeten Ausnahmefällen auch große Unternehmen gefördert (Einzelnotifizierung bei der Kommission) — daher kmu_erforderlich = false (nicht ausschließlich KMU). Es gibt eine Mindestanforderung an die Unternehmensdauer (mindestens 3 Jahre am Markt für bestimmte Darlehen), das ist eine Mindestanforderung, kein Maximalalter (unternehmensalter_max_jahre = null). Keine explizite Antragsfrist oder Gültigkeitsfrist in den vorliegenden Textabschnitten gefunden. Keine expliziten Mitarbeitenden- oder Umsatzobergrenzen angegeben. Confidence 0.8 wegen einigen Konditionen, die ausdrücklich genannt sind (Betrag, De-minimis, Sektorausschlüsse), aber wegen Ausnahmeregelungen und fehlender Fristen/AGVO-Verweis leichte Unsicherheit."
+        },
+        "tokens": {
+          "input": 4645,
+          "output": 2158
+        },
+        "latency": 35527,
+        "cost": 0.0039831
+      },
+      "model2": {
+        "name": "gpt-5",
+        "result": {
+          "richtlinie_gueltigkeit_bis": null,
+          "ausschluss_unternehmen_in_schwierigkeiten": false,
+          "agvo_sektorausschluss": null,
+          "foerderbetrag_max_eur": 2000000,
+          "foerderbetrag_min_eur": null,
+          "de_minimis_beihilfe": true,
+          "antragsfrist": null,
+          "kmu_erforderlich": false,
+          "mitarbeiter_limit_max": null,
+          "umsatz_limit_max_eur": null,
+          "unternehmensalter_max_jahre": null,
+          "extraction_confidence": 0.82,
+          "extraction_notes": "Richtlinie vom 08.12.2015, aber keine 'gültig bis'-Angabe im bereitgestellten Auszug. Programm richtet sich explizit an Unternehmen in Schwierigkeiten, daher kein Ausschluss (false). AGVO/VO 651/2014 wird nicht erwähnt; allerdings sind Steinkohle- und Stahlunternehmen sowie Finanzinstitute explizit ausgeschlossen (keine AGVO-Kennzeichnung, daher Feld null). Maximalbetrag: Darlehen bis 2.000.000 EUR; separater Zuschuss für Insolvenzplan max. 10.000 EUR (wir haben den höchsten absoluten Maximalbetrag angegeben). De-minimis wird explizit für Zuwendungen nach Ziffer IV Nr. 5 genannt, daher true. Keine Antragsfrist genannt. KMU sind primäre Zielgruppe, jedoch können in Ausnahmefällen auch Großunternehmen gefördert werden (kmu_erforderlich=false). Keine expliziten Mitarbeiter- oder Umsatzobergrenzen. Altersvorgabe ist eine Mindestdauer (mindestens 3 Jahre am Markt), keine Maximalgrenze."
+        },
+        "tokens": {
+          "input": 4645,
+          "output": 4541
+        },
+        "latency": 122568,
+        "cost": 0.05121625
+      },
+      "comparison": {
+        "identical": 11,
+        "different": 1,
+        "differences": [
+          "  • extraction_confidence: [gpt-5-mini] 0.8 vs [gpt-5] 0.82"
+        ]
+      }
+    },
+    {
+      "program": {
+        "id": "2d4f8325-c87e-4eaf-9de4-bfe8fcfaa6e6",
+        "title": "Investive Förderung von Einrichtungen, Diensten und Angeboten für Menschen mit Behinderungen (RL Investitionen Teilhabe)",
+        "region": [
+          "Sachsen"
+        ],
+        "entity_type": [
+          "Kommune",
+          "Öffentliche Einrichtung",
+          "Verband/Vereinigung"
+        ]
+      },
+      "model1": {
+        "name": "gpt-5-mini",
+        "result": {
+          "richtlinie_gueltigkeit_bis": null,
+          "ausschluss_unternehmen_in_schwierigkeiten": null,
+          "agvo_sektorausschluss": null,
+          "foerderbetrag_max_eur": null,
+          "foerderbetrag_min_eur": 2500,
+          "de_minimis_beihilfe": null,
+          "antragsfrist": null,
+          "kmu_erforderlich": null,
+          "mitarbeiter_limit_max": null,
+          "umsatz_limit_max_eur": null,
+          "unternehmensalter_max_jahre": null,
+          "extraction_confidence": 0.8,
+          "extraction_notes": "Quelle: Volltext und Richtlinie (Richtlinie vom 12.03.2020). Explizit im Text: Fördersatz bis zu 80% (bei überregionalen Einrichtungen bis zu 90%) — kein absolutes Förderbetrag-Maximum genannt (foerderbetrag_max_eur=null). Mindestfördersumme explizit: mindestens EUR 2.500 allgemein, bei kommunalen Körperschaften EUR 10.000 (foerderbetrag_min_eur setzt den allgemeinen Wert 2.500; kommunale Ausnahme notiert). Projektbeginn zulässig bei Ausgaben < EUR 100.000 (bei kommunalen Körperschaften < EUR 1.000.000) — relevant für Projektstart, nicht als Antragsfrist (antragsfrist=null). Kommunaler Finanzierungsanteil (Landkreis/kreisfreie Stadt) 10% und Eigenanteil des Zuwendungsempfängers mindestens 10% sind explizit. Weitere explizite Bedingungen: Anspruchsberechtigte = Träger der Einrichtung (bei Barrierefreiheit auch Eigentümer/Träger); Bedarfsbestätigungen und Zustimmungen erforderlich; Ausgaben für Umbau dürfen 75% der Neubaukosten nicht überschreiten; vorhandene andere Fördermöglichkeiten sind vorrangig zu nutzen. Keine Erwähnung von AGVO/De-minimis/Unternehmen in Schwierigkeiten oder von KMU- oder Mitarbeiter-/Umsatz- oder Unternehmensaltersgrenzen — diese Felder deshalb null. Konfidenz 0.8: die meisten Angaben sind klar (Fördersatz-Prozent, Mindestbeträge, Schwellen für Projektbeginn), jedoch fehlen viele gesuchte explizite Filterwerte (z. B. absolute Höchstbeträge, Fristen, rechtliche Hinweise zu Beihilfenregelungen), daher kein höherer Wert."
+        },
+        "tokens": {
+          "input": 4447,
+          "output": 1299
+        },
+        "latency": 21195,
+        "cost": 0.0028929000000000003
+      },
+      "model2": {
+        "name": "gpt-5",
+        "result": {
+          "richtlinie_gueltigkeit_bis": null,
+          "ausschluss_unternehmen_in_schwierigkeiten": null,
+          "agvo_sektorausschluss": null,
+          "foerderbetrag_max_eur": null,
+          "foerderbetrag_min_eur": 2500,
+          "de_minimis_beihilfe": null,
+          "antragsfrist": null,
+          "kmu_erforderlich": null,
+          "mitarbeiter_limit_max": null,
+          "umsatz_limit_max_eur": null,
+          "unternehmensalter_max_jahre": null,
+          "extraction_confidence": 0.6,
+          "extraction_notes": "Keine explizite Befristung der Richtlinie im bereitgestellten Text gefunden (nur Datum 'Vom 12. März 2020' genannt); mögliche Geltungsdauer könnte in nicht enthaltenen Teilen stehen. Kein Hinweis auf 'Unternehmen in Schwierigkeiten', AGVO/VO 651/2014 oder De-minimis im gelieferten Auszug. Mindestförderbetrag ausdrücklich genannt: mindestens 2.500 EUR, bei kommunalen Körperschaften 10.000 EUR; extrahiert wurde der allgemeine Mindestbetrag (2.500 EUR). Keine Antragsfrist genannt; daher null. Prozentsätze (80% bzw. 90%) vorhanden, aber keine absoluten Höchstbeträge."
+        },
+        "tokens": {
+          "input": 4447,
+          "output": 2985
+        },
+        "latency": 78601,
+        "cost": 0.035408749999999996
+      },
+      "comparison": {
+        "identical": 11,
+        "different": 1,
+        "differences": [
+          "  • extraction_confidence: [gpt-5-mini] 0.8 vs [gpt-5] 0.6"
+        ]
+      }
+    },
+    {
+      "program": {
+        "id": "52150715-1d05-4c6c-9534-87f1182b9495",
+        "title": "Förderung der kommunalen Prävention (RL KommPräv)",
+        "region": [
+          "Sachsen"
+        ],
+        "entity_type": [
+          "Kommune",
+          "Öffentliche Einrichtung"
+        ]
+      },
+      "model1": {
+        "name": "gpt-5-mini",
+        "result": {
+          "richtlinie_gueltigkeit_bis": null,
+          "ausschluss_unternehmen_in_schwierigkeiten": null,
+          "agvo_sektorausschluss": null,
+          "foerderbetrag_max_eur": null,
+          "foerderbetrag_min_eur": null,
+          "de_minimis_beihilfe": null,
+          "antragsfrist": null,
+          "kmu_erforderlich": null,
+          "mitarbeiter_limit_max": null,
+          "umsatz_limit_max_eur": null,
+          "unternehmensalter_max_jahre": null,
+          "extraction_confidence": 0.8,
+          "extraction_notes": "Programm richtet sich an kommunale Gebietskörperschaften (inkl. Eigenbetriebe). Förderung als nicht rückzahlbarer Zuschuss; Förderanteil bis zu 90 % der zuwendungsfähigen Ausgaben (Prozentangabe, kein absoluter Euro-Maximalbetrag angegeben). Pflichtberatung vor Antragstellung durch die Geschäftsstelle des Landespräventionsrates. Antragstellung jährlich im Zeitraum 31.08. bis 15.10. für das Folgejahr (kein konkretes Ablaufdatum mit Jahr angegeben → Antragsfrist-Feld auf null gesetzt). Keine ausdrückliche Erwähnung von: Ausschluss für Unternehmen in Schwierigkeiten, AGVO/ sektorspezifische Ausschlüsse, De-minimis-Regelung oder absolute Mindest-/Höchstbeträge in Euro. Viele Filterfelder daher bewusst null (nur explizit genannte Werte extrahiert)."
+        },
+        "tokens": {
+          "input": 3446,
+          "output": 1546
+        },
+        "latency": 23426,
+        "cost": 0.002889
+      },
+      "model2": {
+        "name": "gpt-5",
+        "result": {
+          "richtlinie_gueltigkeit_bis": null,
+          "ausschluss_unternehmen_in_schwierigkeiten": null,
+          "agvo_sektorausschluss": null,
+          "foerderbetrag_max_eur": null,
+          "foerderbetrag_min_eur": null,
+          "de_minimis_beihilfe": null,
+          "antragsfrist": null,
+          "kmu_erforderlich": null,
+          "mitarbeiter_limit_max": null,
+          "umsatz_limit_max_eur": null,
+          "unternehmensalter_max_jahre": null,
+          "extraction_confidence": 0.8,
+          "extraction_notes": "Keine Befristung der Richtlinie genannt; Inkrafttreten nach Veröffentlichung, letzte Änderung 18.12.2019. Keine Hinweise auf AGVO, De-minimis oder Ausschluss von 'Unternehmen in Schwierigkeiten' (Programm richtet sich an kommunale Gebietskörperschaften). Keine expliziten absoluten Mindest- oder Höchstbeträge; der Hinweis 'Ausnahmen von der Förderuntergrenze: Zuwendungen von 10.000 Euro und weniger' definiert keine allgemeine Untergrenze, daher keine Betragsgrenzen extrahiert. Antragsfenster jährlich 31.08.–15.10. für das Folgejahr; in begründeten Einzelfällen spätere Anträge mind. 6 Wochen vor Projektbeginn möglich – keine einzelne Stichtagsangabe, daher antragsfrist = null."
+        },
+        "tokens": {
+          "input": 3446,
+          "output": 3460
+        },
+        "latency": 90778,
+        "cost": 0.0389075
+      },
+      "comparison": {
+        "identical": 12,
+        "different": 0,
+        "differences": []
+      }
+    },
+    {
+      "program": {
+        "id": "6c36d7e3-e8ae-480c-bb4d-a9b730e33811",
+        "title": "Förderung der Sicherung und Weiterentwicklung der Qualität in Kindertageseinrichtungen und in der Kindertagespflege (SächsKitaQualiRL)",
+        "region": [
+          "Sachsen"
+        ],
+        "entity_type": [
+          "Bildungseinrichtung",
+          "Kommune",
+          "Öffentliche Einrichtung",
+          "Verband/Vereinigung"
+        ]
+      },
+      "model1": {
+        "name": "gpt-5-mini",
+        "result": {
+          "richtlinie_gueltigkeit_bis": null,
+          "ausschluss_unternehmen_in_schwierigkeiten": null,
+          "agvo_sektorausschluss": null,
+          "foerderbetrag_max_eur": 50000,
+          "foerderbetrag_min_eur": 2000,
+          "de_minimis_beihilfe": null,
+          "antragsfrist": null,
+          "kmu_erforderlich": null,
+          "mitarbeiter_limit_max": null,
+          "umsatz_limit_max_eur": null,
+          "unternehmensalter_max_jahre": null,
+          "extraction_confidence": 0.8,
+          "extraction_notes": "Quelle: bereitgestellter Volltext und Richtlinie. Kein explizites \"gültig bis\"-Datum (Richtlinie datiert 05.07.2016, geändert 04.02.2020) → richtlinie_gueltigkeit_bis = null. Kein Hinweis auf \"Unternehmen in Schwierigkeiten\" oder AGVO/Artikel aus EU-Verordnungen → entsprechende Felder = null. Explizit genannte Beträge: Bewilligungsbehörde kann bei Zuwendungen bis zu 50.000 EUR einen einfachen Verwendungsnachweis zulassen (Hinweis auf 50.000 EUR) → foerderbetrag_max_eur gesetzt auf 50000 (größter explizit genannter Höchstwert). Für Fachtagungen: Förderung nur, wenn im Einzelfall mehr als 2.000 EUR jedoch höchstens 5.000 EUR beträgt → hierher stammt foerderbetrag_min_eur = 2000 (Zahl genannt; Text sagt „mehr als 2.000 EUR“). Weitere explizite Beträge: höchstens 5.000 EUR (Fachtagungen), bis zu 30.000 EUR für eine ganzjährig vollbeschäftigte Fachkraft (Fachberatung), bis zu 40 EUR pro Tag/Teilnehmer bzw. bis zu 40 EUR pro Seminareinheit (24 Einheiten) – diese sind entweder Raten/Einheitssätze oder betreffen spezifische Bereiche und wurden nicht in foerderbetrag_max_eur aggregiert (keine Berechnung vorgenommen, nur explizite absolute Maximalwerte extrahiert). Keine Erwähnung von De-minimis-Regelungen oder EU-Verordnungen → de_minimis_beihilfe = null. Antragsfrist: Text nennt wiederkehrend „bis zum 30. November des Vorjahres“ bzw. „bis spätestens zum 30.11. für das Folgejahr“, aber kein konkretes Kalenderjahr → antragsfrist = null (kein spezifisches Datum/Jahr angegeben). Keine Erwähnung von KMU-Beschränkung, Mitarbeiter- oder Umsatzobergrenzen oder Altersgrenzen von Unternehmen → Felder dazu = null. Hinweise/Unsicherheiten: foerderbetrag_max_eur wurde als 50000 EUR gewählt, weil dies der größte explizit genannte Maximalwert im Dokument ist; es könnte jedoch projektabhängig größere Förderungssummen geben (Richtlinie nennt z.B. Fördersatz von bis zu 80 % ohne absoluten Höchstbetrag für Projekte). Deshalb Confidence moderate (0.8)."
+        },
+        "tokens": {
+          "input": 4282,
+          "output": 2030
+        },
+        "latency": 32109,
+        "cost": 0.0037206
+      },
+      "model2": {
+        "name": "gpt-5",
+        "result": {
+          "richtlinie_gueltigkeit_bis": null,
+          "ausschluss_unternehmen_in_schwierigkeiten": null,
+          "agvo_sektorausschluss": null,
+          "foerderbetrag_max_eur": 30000,
+          "foerderbetrag_min_eur": 2000,
+          "de_minimis_beihilfe": null,
+          "antragsfrist": null,
+          "kmu_erforderlich": null,
+          "mitarbeiter_limit_max": null,
+          "umsatz_limit_max_eur": null,
+          "unternehmensalter_max_jahre": null,
+          "extraction_confidence": 0.6,
+          "extraction_notes": "Keine explizite Gültigkeitsfrist in der Richtlinie (nur Datum 05.07.2016, geändert 04.02.2020). Anträge jährlich bis 30.11. für das Folgejahr; da kein Jahr genannt, antragsfrist=null. Maximalbetrag: bis zu 30.000 EUR für eine ganzjährig vollbeschäftigte Fachkraft in der Fachberatung; zusätzlich für Fachtagungen Höchstbetrag 5.000 EUR pro Vorhaben und Mindestförderbetrag >2.000 EUR (hier als 2.000 EUR erfasst; formal streng >2.000). Fortbildungen: bis 40 EUR je Seminareinheit, max. 24 Einheiten, jedoch keine absolute Gesamtsumme genannt (nicht berechnet). Keine Hinweise auf De-minimis, AGVO oder Ausschluss von Unternehmen in Schwierigkeiten. Keine KMU-, Mitarbeiter-, Umsatz- oder Altersgrenzen genannt."
+        },
+        "tokens": {
+          "input": 4282,
+          "output": 4828
+        },
+        "latency": 140546,
+        "cost": 0.0536325
+      },
+      "comparison": {
+        "identical": 10,
+        "different": 2,
+        "differences": [
+          "  • foerderbetrag_max_eur: [gpt-5-mini] 50000 vs [gpt-5] 30000",
+          "  • extraction_confidence: [gpt-5-mini] 0.8 vs [gpt-5] 0.6"
+        ]
+      }
+    },
+    {
+      "program": {
+        "id": "04ce053c-a5f6-4b42-9cc9-3a7f23b2082a",
+        "title": "Gründungs- und Wachstumsfinanzierung – GuW Thüringen",
+        "region": [
+          "Thüringen"
+        ],
+        "entity_type": [
+          "Existenzgründer/in",
+          "Unternehmen"
+        ]
+      },
+      "model1": {
+        "name": "gpt-5-mini",
+        "result": {
+          "richtlinie_gueltigkeit_bis": null,
+          "ausschluss_unternehmen_in_schwierigkeiten": null,
+          "agvo_sektorausschluss": null,
+          "foerderbetrag_max_eur": 5000000,
+          "foerderbetrag_min_eur": null,
+          "de_minimis_beihilfe": false,
+          "antragsfrist": null,
+          "kmu_erforderlich": false,
+          "mitarbeiter_limit_max": null,
+          "umsatz_limit_max_eur": null,
+          "unternehmensalter_max_jahre": null,
+          "extraction_confidence": 0.8,
+          "extraction_notes": "Maximalbetrag eindeutig: max. 5 Mio. EUR (mehrfach genannt). Programm richtet sich an kleine, mittlere und große Unternehmen sowie Freiberufler → KMU nicht exklusiv (kmu_erforderlich=false). Text explizit: \"Die Darlehen stellen keine öffentliche Beihilfe dar\" → nicht De-minimis (de_minimis_beihilfe=false). Kein ausdrückliches Fristdatum oder \"laufend\" für Antrag angegeben (antragsfrist=null); es gibt eine Abruffrist von 1 Jahr für Auszahlungen, dies ist jedoch nicht als Antragsfrist formuliert. Keine Erwähnung von Ausschluss von Unternehmen in Schwierigkeiten oder AGVO/Sektorausschlüssen. Keine expliziten Mindestbeträge, Mitarbeiter-/Umsatz- oder Unternehmensaltersgrenzen im Text gefunden. Richtlinienstand Februar 2020 angegeben, aber kein \"gültig bis\"-Datum."
+        },
+        "tokens": {
+          "input": 2605,
+          "output": 1177
+        },
+        "latency": 20127,
+        "cost": 0.0021939
+      },
+      "model2": {
+        "name": "gpt-5",
+        "result": {
+          "richtlinie_gueltigkeit_bis": null,
+          "ausschluss_unternehmen_in_schwierigkeiten": null,
+          "agvo_sektorausschluss": null,
+          "foerderbetrag_max_eur": 5000000,
+          "foerderbetrag_min_eur": null,
+          "de_minimis_beihilfe": false,
+          "antragsfrist": null,
+          "kmu_erforderlich": false,
+          "mitarbeiter_limit_max": null,
+          "umsatz_limit_max_eur": null,
+          "unternehmensalter_max_jahre": null,
+          "extraction_confidence": 0.8,
+          "extraction_notes": "Richtlinie nennt nur 'Stand: Februar 2020', kein Gültig-bis-Datum. Maximaler Kreditbetrag explizit: 5.000.000 EUR. Programm weist explizit aus: 'Die Darlehen stellen keine öffentliche Beihilfe dar' → nicht De-minimis; AGVO nicht erwähnt. Antragsberechtigt sind kleine, mittlere und große Unternehmen sowie Freie Berufe → kein KMU-Erfordernis. Keine Angaben zu Antragsfrist, Mitarbeiter-, Umsatz- oder Altersgrenzen im Text."
+        },
+        "tokens": {
+          "input": 2605,
+          "output": 3277
+        },
+        "latency": 47155,
+        "cost": 0.03602625
+      },
+      "comparison": {
+        "identical": 12,
+        "different": 0,
+        "differences": []
+      }
+    },
+    {
+      "program": {
+        "id": "9b35e345-645e-442c-bdf4-43a75b7478bb",
+        "title": "Beteiligungen der Mittelständischen Beteiligungsgesellschaft Thüringen mbH (MBG express)",
+        "region": [
+          "Thüringen"
+        ],
+        "entity_type": [
+          "Unternehmen"
+        ]
+      },
+      "model1": {
+        "name": "gpt-5-mini",
+        "result": {
+          "richtlinie_gueltigkeit_bis": null,
+          "ausschluss_unternehmen_in_schwierigkeiten": null,
+          "agvo_sektorausschluss": null,
+          "foerderbetrag_max_eur": 1250000,
+          "foerderbetrag_min_eur": 50000,
+          "de_minimis_beihilfe": null,
+          "antragsfrist": null,
+          "kmu_erforderlich": true,
+          "mitarbeiter_limit_max": 500,
+          "umsatz_limit_max_eur": 50000000,
+          "unternehmensalter_max_jahre": null,
+          "extraction_confidence": 0.8,
+          "extraction_notes": "Richtlinie verwendet (Priorität) für Förderbeträge: stille Beteiligungen standardmäßig bis 1.250.000 EUR (Ausnahmefälle bis 2.500.000 EUR). Volltext (Programm-spezifisch MBG express) nennt allerdings \"bis zu EUR 140.000\" — beides im Text vorhanden; Primärquelle (Richtlinie) wurde für foerderbetrag_max_eur verwendet. Mindestbetrag 50.000 EUR explizit in Richtlinie. KMU-Anforderung explizit als \"mittelständische Unternehmen\" mit Größenbeschränkungen; daher kmu_erforderlich=true. Mitarbeitergrenze steht als \"weniger als 500\" (hier als 500 extrahiert, Hinweis: Text formuliert strikt <500). Umsatzgrenze 50 Mio. EUR p.a. (Ausnahmen bis 75 Mio. EUR genannt). Keine explizite Frist/\"gültig bis\"-Angabe gefunden. Text schließt Sanierungen/Umschuldungen aus, enthält aber nicht wörtlich die Formulierung \"Unternehmen in Schwierigkeiten\" – daher ausschluss_unternehmen_in_schwierigkeiten = null. Keine AGVO- oder De-minimis-Verweise gefunden."
+        },
+        "tokens": {
+          "input": 2653,
+          "output": 2144
+        },
+        "latency": 33026,
+        "cost": 0.0033687
+      },
+      "model2": {
+        "name": "gpt-5",
+        "result": {
+          "richtlinie_gueltigkeit_bis": null,
+          "ausschluss_unternehmen_in_schwierigkeiten": null,
+          "agvo_sektorausschluss": null,
+          "foerderbetrag_max_eur": 140000,
+          "foerderbetrag_min_eur": null,
+          "de_minimis_beihilfe": null,
+          "antragsfrist": null,
+          "kmu_erforderlich": false,
+          "mitarbeiter_limit_max": 500,
+          "umsatz_limit_max_eur": 50000000,
+          "unternehmensalter_max_jahre": null,
+          "extraction_confidence": 0.8,
+          "extraction_notes": "Programmspezifisch (MBG express) wird eine stille Beteiligung bis 140.000 EUR genannt; die allgemeine MBG-Richtlinie (Jan 2018) weist höhere Beträge aus, dürfte aber das generische Angebot betreffen. Deshalb wurde für den Maximalbetrag 140.000 EUR verwendet und kein Mindestbetrag gesetzt. Antragsberechtigt: mittelständische Unternehmen außer Landwirtschaft, bis 50 Mio. EUR Umsatz und <500 Beschäftigte; daher kmu_erforderlich = false sowie Mitarbeiter-/Umsatzgrenzen extrahiert. Es wird ein Mindestunternehmensalter von mindestens 3 Jahren gefordert (keine Maximalgrenze). Kein expliziter Hinweis auf De-minimis, AGVO oder 'Unternehmen in Schwierigkeiten'. Keine Antragsfrist genannt."
+        },
+        "tokens": {
+          "input": 2653,
+          "output": 5059
+        },
+        "latency": 145464,
+        "cost": 0.05390625
+      },
+      "comparison": {
+        "identical": 9,
+        "different": 3,
+        "differences": [
+          "  • foerderbetrag_max_eur: [gpt-5-mini] 1250000 vs [gpt-5] 140000",
+          "  • foerderbetrag_min_eur: [gpt-5-mini] 50000 vs [gpt-5] null",
+          "  • kmu_erforderlich: [gpt-5-mini] true vs [gpt-5] false"
+        ]
+      }
+    },
+    {
+      "program": {
+        "id": "c30b3632-bff7-428f-b0d6-83158cd80d2f",
+        "title": "Kompetenzen verlässlich voranbringen (VwV Kolibri)",
+        "region": [
+          "Baden-Württemberg"
+        ],
+        "entity_type": [
+          "Kommune",
+          "Öffentliche Einrichtung",
+          "Verband/Vereinigung"
+        ]
+      },
+      "model1": {
+        "name": "gpt-5-mini",
+        "result": {
+          "richtlinie_gueltigkeit_bis": null,
+          "ausschluss_unternehmen_in_schwierigkeiten": null,
+          "agvo_sektorausschluss": null,
+          "foerderbetrag_max_eur": 2200,
+          "foerderbetrag_min_eur": null,
+          "de_minimis_beihilfe": null,
+          "antragsfrist": null,
+          "kmu_erforderlich": null,
+          "mitarbeiter_limit_max": null,
+          "umsatz_limit_max_eur": null,
+          "unternehmensalter_max_jahre": null,
+          "extraction_confidence": 0.8,
+          "extraction_notes": "Gefundene Beträge: Entwicklungsgespräch EUR 20 (Einzelbetrag), ISF+ bis zu EUR 1.200 (für Gruppe bis 2 Kinder), SBS EUR 2.200 (für Gruppe aus 3–4 Kindern) je Kindergartenjahr. Als foerderbetrag_max_eur wurde EUR 2.200 gewählt (höchster explizit genannter absoluter Betrag). Antragsfrist: Text nennt „bis spätestens zum 30. November des Förderjahres“ (wiederkehrender Stichtag ohne Jahr) — kein konkretes Datum in ISO-Form vorhanden, daher antragsfrist = null. Richtlinie-Datum (Verwaltungsvorschrift) 22.10.2019 vorhanden, aber kein „gültig bis“-Datum → richtlinie_gueltigkeit_bis = null. Zuwendungsempfänger und Beschränkungen sind ausführlich beschrieben (kommunale und freie Träger, geeignete andere juristische Personen, u.ä.; räumliche Beschränkung: Baden‑Württemberg). SBS-Zuwendungsempfänger: ausschließlich kommunale und freie Träger; ISF+ auch weitere geeignete Stellen (mit Nachweis/Kooperation). Keine Erwähnung/Kein expliziter Ausschluss von „Unternehmen in Schwierigkeiten“, keine Erwähnung von AGVO/Verordnungstexten, keine Angabe zu De-minimis-Beihilfen, KMU-Anforderungen, Mitarbeiter- oder Umsatzgrenzen oder Unternehmensaltersgrenzen. Deshalb viele Felder bewusst als null gesetzt. Confidence 0.8: die monetären Angaben und Empfängerkreise sind klar; Fristformulierung und fehlende rechtliche Bezüge (AGVO/De-minimis) führen zu leichten Unsicherheiten."
+        },
+        "tokens": {
+          "input": 4441,
+          "output": 1736
+        },
+        "latency": 24334,
+        "cost": 0.0034154999999999997
+      },
+      "model2": {
+        "name": "gpt-5",
+        "result": {
+          "richtlinie_gueltigkeit_bis": null,
+          "ausschluss_unternehmen_in_schwierigkeiten": null,
+          "agvo_sektorausschluss": null,
+          "foerderbetrag_max_eur": 2200,
+          "foerderbetrag_min_eur": null,
+          "de_minimis_beihilfe": null,
+          "antragsfrist": null,
+          "kmu_erforderlich": null,
+          "mitarbeiter_limit_max": null,
+          "umsatz_limit_max_eur": null,
+          "unternehmensalter_max_jahre": null,
+          "extraction_confidence": 0.78,
+          "extraction_notes": "Keine Gültigkeitsfrist in der Richtlinie angegeben. Keine Hinweise auf Unternehmen in Schwierigkeiten, AGVO- oder De-minimis-Regelungen. Förderbeträge sind pauschal je Maßnahme/Gruppe genannt; höchster expliziter Betrag im Text ist 2.200 EUR je Kindergartenjahr für SBS-Gruppen (3–4 Kinder); daher als foerderbetrag_max_eur verwendet. Es gibt auch 20 EUR je Entwicklungsgespräch und 1.200 EUR für ISF+ (bis zu 2 Kinder), jedoch keine expliziten Mindestbetrags- oder Gesamthöchstgrenzen pro Antragsteller. Antragsfrist: „bis spätestens zum 30. November des Förderjahres“ – ohne Jahresangabe; daher nicht als ISO-Datum abbildbar. Zielgruppe sind Träger/Institutionen der Kindertagesbetreuung, keine KMU-Spezifika; Mitarbeiter-, Umsatz- und Unternehmensaltergrenzen werden nicht genannt. In der Richtlinie werden weitere Nummern (z. B. 4.4.6.3, 4.4.7.3, 4.5) referenziert, die ggf. zusätzliche Beträge/Details enthalten, sind hier aber nicht vollständig enthalten."
+        },
+        "tokens": {
+          "input": 4441,
+          "output": 3737
+        },
+        "latency": 100632,
+        "cost": 0.04292125
+      },
+      "comparison": {
+        "identical": 11,
+        "different": 1,
+        "differences": [
+          "  • extraction_confidence: [gpt-5-mini] 0.8 vs [gpt-5] 0.78"
+        ]
+      }
+    }
+  ],
+  "summary": {
+    "avg_latency": {
+      "model1": 29080.2,
+      "model2": 110573.6
+    },
+    "avg_tokens": {
+      "model1": 5718.4,
+      "model2": 8044
+    },
+    "avg_agreement": 0.8666666666666666,
+    "avg_confidence": {
+      "model1": 0.7999999999999999,
+      "model2": 0.7449999999999999
+    }
+  }
+}

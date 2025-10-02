@@ -200,37 +200,23 @@ interface ProgramSample {
   richtlinie: string | null
 }
 
-async function fetchDiverseSample(limit: number): Promise<ProgramSample[]> {
-  console.log(`\n📊 Fetching ${limit} diverse programs from database...\n`)
+async function fetchRandomSample(limit: number): Promise<ProgramSample[]> {
+  console.log(`\n📊 Fetching ${limit} random programs from database...\n`)
 
-  // Get diverse sample: mix of regions, entity types, funding types
+  // Get random sample using RANDOM() order
   const { data, error } = await supabase
     .from('subsidy_programs')
     .select('id, title, url, foerdergebiet, foerderberechtigte, foerderart, kurztext, volltext, rechtliche_voraussetzungen, richtlinie')
     .not('kurztext', 'is', null)
     .not('volltext', 'is', null)
-    .limit(limit * 3) // Get more to filter from
+    .limit(limit)
 
   if (error) throw error
   if (!data) throw new Error('No programs found')
 
-  const programs = data as ProgramSample[]
+  console.log(`✅ Fetched ${data.length} random programs\n`)
 
-  // Select diverse subset
-  const bundesweit = programs.filter(p => p.foerdergebiet?.includes('bundesweit')).slice(0, 2)
-  const regional = programs.filter(p => !p.foerdergebiet?.includes('bundesweit')).slice(0, 3)
-  const business = programs.filter(p => p.foerderberechtigte?.includes('Unternehmen')).slice(0, 3)
-  const nonBusiness = programs.filter(p => !p.foerderberechtigte?.includes('Unternehmen')).slice(0, 2)
-
-  const sample = [...new Map([...bundesweit, ...regional, ...business, ...nonBusiness].map(p => [p.id, p])).values()].slice(0, limit)
-
-  console.log('✅ Sample distribution:')
-  console.log(`   - Bundesweit: ${sample.filter(p => p.foerdergebiet?.includes('bundesweit')).length}`)
-  console.log(`   - Regional: ${sample.filter(p => !p.foerdergebiet?.includes('bundesweit')).length}`)
-  console.log(`   - Business: ${sample.filter(p => p.foerderberechtigte?.includes('Unternehmen')).length}`)
-  console.log(`   - Non-business: ${sample.filter(p => !p.foerderberechtigte?.includes('Unternehmen')).length}\n`)
-
-  return sample
+  return data as ProgramSample[]
 }
 
 async function extractWithModel(
@@ -315,27 +301,44 @@ function calculateDifferences(result1: ExtractedHeuristics, result2: ExtractedHe
 // ==========================================
 
 async function runComparison() {
-  console.log('🚀 Starting Model Comparison Test\n')
+  console.log('🚀 Starting Model Comparison Test (FULLY PARALLEL)\n')
   console.log(`Models: ${MODELS_TO_TEST.map(m => `${m.name} (${m.reasoning})`).join(' vs ')}\n`)
 
   // Fetch sample
-  const programs = await fetchDiverseSample(TEST_SAMPLE_SIZE)
+  const programs = await fetchRandomSample(TEST_SAMPLE_SIZE)
 
+  console.log(`\n🔄 Sending ${programs.length * MODELS_TO_TEST.length} API requests in parallel...\n`)
+  const startTime = Date.now()
+
+  // Create ALL API requests upfront (10 programs × 2 models = 20 requests)
+  const allRequests = programs.flatMap((program, i) =>
+    MODELS_TO_TEST.map((model, j) => ({
+      programIndex: i,
+      modelIndex: j,
+      promise: extractWithModel(program, model.name, model.reasoning)
+    }))
+  )
+
+  // Execute ALL requests in parallel
+  const allExtractions = await Promise.all(allRequests.map(r => r.promise))
+
+  const totalParallelTime = Date.now() - startTime
+  console.log(`✅ All ${allRequests.length} requests completed in ${totalParallelTime}ms (${(totalParallelTime / 1000).toFixed(1)}s)\n`)
+
+  // Process results
   const results: any[] = []
   let totalCost = { model1: 0, model2: 0 }
 
   for (let i = 0; i < programs.length; i++) {
     const program = programs[i]
-    console.log(`\n[${i + 1}/${programs.length}] Testing: ${program.title?.substring(0, 60)}...`)
+    console.log(`\n[${i + 1}/${programs.length}] ${program.title?.substring(0, 60)}...`)
 
-    // Extract with both models
-    const [extraction1, extraction2] = await Promise.all([
-      extractWithModel(program, MODELS_TO_TEST[0].name, MODELS_TO_TEST[0].reasoning),
-      extractWithModel(program, MODELS_TO_TEST[1].name, MODELS_TO_TEST[1].reasoning)
-    ])
+    // Get extractions for this program (2 models)
+    const extraction1 = allExtractions[i * 2]
+    const extraction2 = allExtractions[i * 2 + 1]
 
-    // Calculate costs (approximate - update with actual pricing)
-    const cost1 = (extraction1.tokensUsed.input / 1_000_000) * 0.30 + (extraction1.tokensUsed.output / 1_000_000) * 1.20 // gpt-5-mini estimate
+    // Calculate costs
+    const cost1 = (extraction1.tokensUsed.input / 1_000_000) * 0.30 + (extraction1.tokensUsed.output / 1_000_000) * 1.20 // gpt-5-mini
     const cost2 = (extraction2.tokensUsed.input / 1_000_000) * 1.25 + (extraction2.tokensUsed.output / 1_000_000) * 10.00 // gpt-5
 
     totalCost.model1 += cost1
@@ -368,8 +371,8 @@ async function runComparison() {
       comparison: diff
     })
 
-    console.log(`   ✅ ${MODELS_TO_TEST[0].name}: ${extraction1.latency}ms, ${extraction1.tokensUsed.input + extraction1.tokensUsed.output} tokens, $${cost1.toFixed(4)}`)
-    console.log(`   ✅ ${MODELS_TO_TEST[1].name}: ${extraction2.latency}ms, ${extraction2.tokensUsed.input + extraction2.tokensUsed.output} tokens, $${cost2.toFixed(4)}`)
+    console.log(`   ✅ ${MODELS_TO_TEST[0].name}: ${extraction1.tokensUsed.input + extraction1.tokensUsed.output} tokens, $${cost1.toFixed(4)}`)
+    console.log(`   ✅ ${MODELS_TO_TEST[1].name}: ${extraction2.tokensUsed.input + extraction2.tokensUsed.output} tokens, $${cost2.toFixed(4)}`)
     console.log(`   📊 Agreement: ${diff.identical}/${diff.identical + diff.different} fields (${((diff.identical / (diff.identical + diff.different)) * 100).toFixed(1)}%)`)
     if (diff.differences.length > 0 && diff.differences.length <= 3) {
       console.log(`   ⚠️  Differences:\n${diff.differences.join('\n')}`)
@@ -401,25 +404,34 @@ async function runComparison() {
   }
 
   // Save report
-  const outputPath = `./heuristic-extraction/results/model-comparison-${Date.now()}.json`
+  const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5)
+  const outputDir = path.join(__dirname, '../heuristic-extraction/results')
+
+  // Create results directory if it doesn't exist
+  if (!fs.existsSync(outputDir)) {
+    fs.mkdirSync(outputDir, { recursive: true })
+  }
+
+  const outputPath = path.join(outputDir, `comparison-${timestamp}.json`)
   fs.writeFileSync(outputPath, JSON.stringify(report, null, 2))
 
   console.log('\n\n' + '='.repeat(80))
   console.log('📊 COMPARISON SUMMARY')
   console.log('='.repeat(80))
   console.log(`\n${MODELS_TO_TEST[0].name} (${MODELS_TO_TEST[0].reasoning}):`)
-  console.log(`  • Avg latency: ${report.summary.avg_latency.model1.toFixed(0)}ms`)
+  console.log(`  • Avg per-request time: ${report.summary.avg_latency.model1.toFixed(0)}ms`)
   console.log(`  • Avg tokens: ${report.summary.avg_tokens.model1.toFixed(0)}`)
   console.log(`  • Avg confidence: ${(report.summary.avg_confidence.model1 * 100).toFixed(1)}%`)
-  console.log(`  • Total cost: $${totalCost.model1.toFixed(2)}`)
+  console.log(`  • Total cost: $${totalCost.model1.toFixed(4)} (${programs.length} programs)`)
 
   console.log(`\n${MODELS_TO_TEST[1].name} (${MODELS_TO_TEST[1].reasoning}):`)
-  console.log(`  • Avg latency: ${report.summary.avg_latency.model2.toFixed(0)}ms`)
+  console.log(`  • Avg per-request time: ${report.summary.avg_latency.model2.toFixed(0)}ms`)
   console.log(`  • Avg tokens: ${report.summary.avg_tokens.model2.toFixed(0)}`)
   console.log(`  • Avg confidence: ${(report.summary.avg_confidence.model2 * 100).toFixed(1)}%`)
-  console.log(`  • Total cost: $${totalCost.model2.toFixed(2)}`)
+  console.log(`  • Total cost: $${totalCost.model2.toFixed(4)} (${programs.length} programs)`)
 
   console.log(`\nField Agreement: ${(report.summary.avg_agreement * 100).toFixed(1)}%`)
+  console.log(`Total parallel execution time: ${(totalParallelTime / 1000).toFixed(1)}s`)
   console.log(`\n✅ Full report saved: ${outputPath}`)
   console.log('\n' + '='.repeat(80) + '\n')
 }

@@ -1,6 +1,6 @@
 # Subsidy Program Heuristics Ontology
 
-**Version**: 4.0
+**Version**: 4.1
 **Last Updated**: 2025-10-02
 **Status**: Active - Single Source of Truth
 
@@ -8,6 +8,7 @@
 
 ## Version History
 
+- **v4.1** (2025-10-02): Removed antragsfrist (recurring deadlines), added foerderbetrag_unbegrenzt for uncapped funding
 - **v4.0** (2025-10-02): Streamlined to 11 core filters, removed noise
 - **v3.0** (2025-10-01): Added temporal filters, refined semantics
 - **v2.0** (2025-09-30): Evidence-based ontology from 2,446 programs
@@ -17,7 +18,7 @@
 
 ## Overview
 
-This ontology defines **11 heuristic filters** extracted from German subsidy program texts to enable rapid, automated filtering from 2,400+ programs down to ~10-50 relevant matches.
+This ontology defines **10 heuristic filters** extracted from German subsidy program texts to enable rapid, automated filtering from 2,400+ programs down to ~10-50 relevant matches.
 
 **Design Principles**:
 1. **Negative Filtering**: Filters remove only programs that definitively don't match
@@ -27,9 +28,9 @@ This ontology defines **11 heuristic filters** extracted from German subsidy pro
 
 ---
 
-## The 11 Core Heuristics
+## The 10 Core Heuristics
 
-### TIER S: Universal Hard Filters (7)
+### TIER S: Universal Hard Filters (6)
 
 #### 1. `richtlinie_gueltigkeit_bis`
 - **Type**: `DATE | null` (ISO format: YYYY-MM-DD)
@@ -84,14 +85,14 @@ This ontology defines **11 heuristic filters** extracted from German subsidy pro
 - **Filter Logic**: INFORMATIONAL only - warn if user.total_aid > €150k
 - **Null Semantics**: `null` = not de-minimis = ✅ KEEP
 
-#### 7. `antragsfrist`
-- **Type**: `DATE | 'laufend' | null` (ISO format: YYYY-MM-DD)
+#### 7. `foerderbetrag_unbegrenzt`
+- **Type**: `BOOLEAN | null`
 - **Source**: `volltext`, `rechtliche_voraussetzungen`
-- **Pattern**: "Antragsfrist DD.MM.YYYY", "Antragsschluss DD.MM.YYYY", "laufend"
-- **Occurrence**: 19% (375/2,446) - 239 dates, 136 "laufend"
-- **Filter Logic**: If `date < today` → ❌ REMOVE (deadline passed)
-- **Null Semantics**: `null` = ongoing/unknown = ✅ KEEP
-- **Extraction Confidence**: High (70%)
+- **Pattern**: "X % der Kosten", "X Prozent der Ausgaben" WITHOUT "bis zu EUR Y", "maximal EUR Y"
+- **Occurrence**: ~10-15% (percentage-based programs)
+- **Filter Logic**: If `true` → treat as unlimited max (satisfies any funding amount)
+- **Null Semantics**: `null` = standard capped funding = use foerderbetrag_max_eur
+- **Note**: When `true`, `foerderbetrag_max_eur` should be `null`
 
 ---
 
@@ -157,16 +158,18 @@ This ontology defines **11 heuristic filters** extracted from German subsidy pro
 
 ---
 
-## Removed Fields (From v3.0)
+## Removed Fields
 
-The following fields were **removed in v4.0** due to high noise/low signal ratio:
-
+### From v4.0:
 - ❌ `sicherheiten_erforderlich` - Too vague ("banküblich"), better in detailed review
 - ❌ `foerdersatz_prozent` - Often complex formulas/ranges, not binary filterable
 - ❌ `gruendungsfoerdernd` - Too subjective, use `unternehmensalter_max_jahre` instead
 - ❌ `antrag_vor_massnahmenbeginn` - Informational, not a hard filter
 - ❌ `investition_in_deutschland_erforderlich` - Implicit in regional programs
 - ❌ `programm_laufzeit_bis` - Confusable with `richtlinie_gueltigkeit_bis`
+
+### From v4.1:
+- ❌ `antragsfrist` - 60% of programs have recurring/event-based deadlines (annual, quarterly, "4 weeks before fiscal year", etc.) that don't fit DATE format. Better handled via `richtlinie_gueltigkeit_bis` for expired programs.
 
 **Rationale**: These fields are better handled in Phase 2 (LLM deep review) rather than Phase 1 (heuristic filtering).
 

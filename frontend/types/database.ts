@@ -28,17 +28,17 @@ export interface Database {
           scraped_at: string
           created_at?: string
 
-          // Extracted heuristics (Ontology v4.0 - 11 filters)
+          // Extracted heuristics (Ontology v4.1 - 10 filters)
           // TIER S: Universal Hard Filters (7)
           richtlinie_gueltigkeit_bis: string | null // Program validity deadline
           ausschluss_unternehmen_in_schwierigkeiten: boolean | null // Excludes distressed companies
           agvo_sektorausschluss: boolean | null // EU sector exclusions (46% of programs)
-          foerderbetrag_max_eur: number | null // Max funding amount
+          foerderbetrag_max_eur: number | null // Max funding amount (NULL if unbegrenzt=true)
           foerderbetrag_min_eur: number | null // Min funding amount
           de_minimis_beihilfe: boolean | null // De-minimis aid (€200k/3y)
-          antragsfrist: string | null // Application deadline
+          foerderbetrag_unbegrenzt: boolean | null // TRUE if percentage-based uncapped (e.g., "80% of costs")
 
-          // TIER A: Specific Hard Filters (4)
+          // TIER A: Specific Hard Filters (3)
           kmu_erforderlich: boolean | null // SME requirement
           mitarbeiter_limit_max: number | null // Explicit max employees (overrides KMU)
           umsatz_limit_max_eur: number | null // Explicit max revenue (overrides KMU)
@@ -65,14 +65,14 @@ export interface Database {
           ansprechpartner?: string | null
           scraped_at: string
 
-          // Extracted heuristics v4.0 (optional for insert)
+          // Extracted heuristics v4.1 (optional for insert)
           richtlinie_gueltigkeit_bis?: string | null
           ausschluss_unternehmen_in_schwierigkeiten?: boolean | null
           agvo_sektorausschluss?: boolean | null
           foerderbetrag_max_eur?: number | null
           foerderbetrag_min_eur?: number | null
           de_minimis_beihilfe?: boolean | null
-          antragsfrist?: string | null
+          foerderbetrag_unbegrenzt?: boolean | null
           kmu_erforderlich?: boolean | null
           mitarbeiter_limit_max?: number | null
           umsatz_limit_max_eur?: number | null
@@ -97,14 +97,14 @@ export interface Database {
           ansprechpartner?: string | null
           scraped_at?: string
 
-          // Extracted heuristics v4.0 (optional for update)
+          // Extracted heuristics v4.1 (optional for update)
           richtlinie_gueltigkeit_bis?: string | null
           ausschluss_unternehmen_in_schwierigkeiten?: boolean | null
           agvo_sektorausschluss?: boolean | null
           foerderbetrag_max_eur?: number | null
           foerderbetrag_min_eur?: number | null
           de_minimis_beihilfe?: boolean | null
-          antragsfrist?: string | null
+          foerderbetrag_unbegrenzt?: boolean | null
           kmu_erforderlich?: boolean | null
           mitarbeiter_limit_max?: number | null
           umsatz_limit_max_eur?: number | null

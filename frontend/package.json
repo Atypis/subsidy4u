@@ -6,7 +6,9 @@
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",
     "start": "next start",
-    "test-extraction": "tsx scripts/test-extraction.ts"
+    "test-extraction": "tsx scripts/test-extraction.ts",
+    "extract": "tsx scripts/extract-and-save.ts",
+    "extract:test": "tsx scripts/extract-and-save.ts --test"
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^1.0.0",
